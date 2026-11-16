@@ -9,7 +9,7 @@ window.TIENDA = {
   /* Número de WhatsApp que recibe los pedidos.
      Formato: 549 + código de área sin 0 + número sin 15.
      Ejemplo: 11 1234-5678  ->  "5491112345678" */
-  whatsapp: "54911XXXXXXXX",
+  whatsapp: "5491158177799",
 
   instagram: "bel.intimma",
   tiktok: "bel.intimma",
