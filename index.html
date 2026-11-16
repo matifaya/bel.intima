@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Bel Intimma · Ropa interior y pijamas en Gral. San Martín</title>
+  <meta name="description" content="Conjuntos con y sin aro y pijamas. Elegí tus prendas, armá tu pedido y mandalo por WhatsApp. Retiro en Gral. San Martín y envíos.">
+  <meta name="theme-color" content="#4A2A3A">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Bel Intimma · Ropa interior y pijamas">
+  <meta property="og:description" content="Conjuntos con y sin aro y pijamas. Pedí por WhatsApp.">
+  <meta property="og:locale" content="es_AR">
+
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..600;1,6..96,400..500&family=Jost:wght@400;500;600&display=swap">
+
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <a class="saltar" href="#catalogo">Ir al catálogo</a>
+
+  <!-- Franja de avisos -->
+  <div class="aviso" role="region" aria-label="Avisos de la tienda">
+    <p class="aviso__texto" data-avisos>Aceptamos todos los medios de pago</p>
+  </div>
+
+  <!-- Encabezado -->
+  <header class="cabecera" data-cabecera>
+    <div class="cabecera__fila contenedor">
+      <button class="icono-btn cabecera__menu" type="button" data-abrir="menu" aria-label="Abrir menú" aria-haspopup="dialog">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+      </button>
+
+      <a class="logotipo" translate="no" href="#inicio" aria-label="Bel Intimma, inicio">bel.intimma</a>
+
+      <nav class="cabecera__nav" aria-label="Principal">
+        <a href="#catalogo">Catálogo</a>
+        <a href="#como-comprar">Cómo comprar</a>
+        <a href="#talles">Talles</a>
+        <a href="#preguntas">Preguntas</a>
+      </nav>
+
+      <button class="bolsa" type="button" data-abrir="pedido" aria-haspopup="dialog">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8V7a3 3 0 0 1 6 0v1"/></svg>
+        <span class="bolsa__texto">Tu pedido</span>
+        <span class="bolsa__cuenta" data-cuenta aria-live="polite">0</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="inicio">
+    <!-- Hero -->
+    <section class="hero" aria-labelledby="hero-titulo">
+      <div class="hero__grilla contenedor">
+        <div class="hero__texto">
+          <h1 id="hero-titulo" class="hero__titulo">Lencería y pijamas para sentirte linda todos los días</h1>
+          <p class="hero__bajada">Conjuntos con y sin aro y pijamas suaves, elegidos uno por uno en Gral. San Martín. Armás tu pedido acá y lo confirmamos por WhatsApp.</p>
+          <div class="hero__acciones">
+            <a class="btn btn--principal" href="#catalogo">Ver el catálogo</a>
+            <a class="btn btn--suave" href="#como-comprar">Cómo comprar</a>
+          </div>
+        </div>
+
+        <figure class="avatar" aria-hidden="true">
+          <div class="avatar__circulo" data-avatar></div>
+        </figure>
+      </div>
+    </section>
+    <div class="feston" aria-hidden="true"></div>
+
+    <!-- Categorías, como los destacados de Instagram -->
+    <nav class="destacados contenedor" aria-label="Categorías">
+      <ul class="destacados__lista" data-destacados></ul>
+    </nav>
+
+    <!-- Catálogo -->
+    <section id="catalogo" class="catalogo contenedor" aria-labelledby="catalogo-titulo">
+      <div class="catalogo__cabeza">
+        <h2 id="catalogo-titulo" class="titulo-seccion">Catálogo</h2>
+        <p class="catalogo__cantidad" data-cantidad aria-live="polite"></p>
+      </div>
+
+      <div class="filtros" role="group" aria-label="Filtrar por categoría" data-filtros></div>
+
+      <ul class="grilla" data-grilla></ul>
+      <p class="grilla__vacia" data-vacia hidden>Todavía no hay productos en esta categoría. Escribinos por WhatsApp y te contamos qué llega.</p>
+    </section>
+
+    <!-- Cómo comprar: es una secuencia real, por eso va numerada -->
+    <section id="como-comprar" class="pasos" aria-labelledby="pasos-titulo">
+      <div class="feston feston--arriba" aria-hidden="true"></div>
+      <div class="pasos__cuerpo">
+        <div class="contenedor">
+          <h2 id="pasos-titulo" class="titulo-seccion">Cómo comprar</h2>
+          <ol class="pasos__lista">
+            <li>
+              <h3>Elegí tus prendas</h3>
+              <p>Tocá un producto, elegí talle y color, y sumalo a tu pedido. Podés agregar todo lo que quieras.</p>
+            </li>
+            <li>
+              <h3>Mandá el pedido por WhatsApp</h3>
+              <p>Con un toque se arma el mensaje con tus prendas, talles y el total. No tenés que copiar nada.</p>
+            </li>
+            <li>
+              <h3>Coordinamos pago y entrega</h3>
+              <p>Te confirmamos el stock, pagás con el medio que prefieras y retirás o te lo enviamos.</p>
+            </li>
+          </ol>
+        </div>
+      </div>
+      <div class="feston" aria-hidden="true"></div>
+    </section>
+
+    <!-- Talles + pagos y envíos -->
+    <div class="info contenedor">
+      <section id="talles" class="info__bloque" aria-labelledby="talles-titulo">
+        <h2 id="talles-titulo" class="titulo-seccion">Guía de talles</h2>
+        <p class="info__nota">Medí el contorno con un centímetro, sin ajustar. Si quedás entre dos talles, elegí el más grande o escribinos y te ayudamos.</p>
+
+        <div class="tabla-envoltura" tabindex="0" role="region" aria-label="Tabla de talles de conjuntos sin aro y pijamas">
+          <table class="tabla">
+            <caption>Conjuntos sin aro y pijamas</caption>
+            <thead>
+              <tr><th scope="col">Talle</th><th scope="col">Busto</th><th scope="col">Cintura</th><th scope="col">Cadera</th></tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">S</th><td>82–88&nbsp;cm</td><td>62–68&nbsp;cm</td><td>88–94&nbsp;cm</td></tr>
+              <tr><th scope="row">M</th><td>88–94&nbsp;cm</td><td>68–74&nbsp;cm</td><td>94–100&nbsp;cm</td></tr>
+              <tr><th scope="row">L</th><td>94–100&nbsp;cm</td><td>74–80&nbsp;cm</td><td>100–106&nbsp;cm</td></tr>
+              <tr><th scope="row">XL</th><td>100–106&nbsp;cm</td><td>80–86&nbsp;cm</td><td>106–112&nbsp;cm</td></tr>
+              <tr><th scope="row">XXL</th><td>106–112&nbsp;cm</td><td>86–92&nbsp;cm</td><td>112–118&nbsp;cm</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="tabla-envoltura" tabindex="0" role="region" aria-label="Tabla de talles de corpiños con aro">
+          <table class="tabla">
+            <caption>Corpiños con aro</caption>
+            <thead>
+              <tr><th scope="col">Talle</th><th scope="col">Contorno bajo busto</th><th scope="col">Equivale a</th></tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">85</th><td>68–72&nbsp;cm</td><td>S</td></tr>
+              <tr><th scope="row">90</th><td>73–77&nbsp;cm</td><td>M</td></tr>
+              <tr><th scope="row">95</th><td>78–82&nbsp;cm</td><td>L</td></tr>
+              <tr><th scope="row">100</th><td>83–87&nbsp;cm</td><td>XL</td></tr>
+              <tr><th scope="row">105</th><td>88–92&nbsp;cm</td><td>XXL</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="pagos" class="info__bloque info__bloque--tarjeta" aria-labelledby="pagos-titulo">
+        <h2 id="pagos-titulo" class="titulo-seccion">Pagos y entregas</h2>
+
+        <h3 class="info__sub">Medios de pago</h3>
+        <ul class="medios" data-medios></ul>
+        <p class="info__nota" data-nota-descuento hidden></p>
+
+        <h3 class="info__sub">Entregas</h3>
+        <ul class="entregas">
+          <li>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+            <div><strong>Retiro sin cargo</strong><span>Coordinamos día y horario en Gral. San Martín.</span></div>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.5"/><circle cx="17" cy="17.5" r="1.5"/></svg>
+            <div><strong>Envíos</strong><span>A domicilio o por correo. Te pasamos el costo según tu zona.</span></div>
+          </li>
+        </ul>
+      </section>
+    </div>
+
+    <!-- Preguntas frecuentes -->
+    <section id="preguntas" class="preguntas contenedor" aria-labelledby="preguntas-titulo">
+      <h2 id="preguntas-titulo" class="titulo-seccion">Preguntas frecuentes</h2>
+
+      <div class="acordeon">
+        <details>
+          <summary>¿Cómo sé si hay stock de mi talle?</summary>
+          <p>Cuando nos mandás el pedido por WhatsApp te confirmamos el stock antes de que pagues. Si algo no está, te ofrecemos otro color o talle parecido.</p>
+        </details>
+        <details>
+          <summary>¿Puedo cambiar una prenda?</summary>
+          <p>Sí, coordinamos cambios de talle por WhatsApp. Por higiene, la prenda tiene que estar sin uso y con su etiqueta.</p>
+        </details>
+        <details>
+          <summary>¿Hacen envíos fuera de San Martín?</summary>
+          <p>Sí. Enviamos a domicilio o por correo y te pasamos el costo según tu zona antes de cerrar el pedido.</p>
+        </details>
+        <details>
+          <summary>¿Tengo que pagar para enviar el pedido?</summary>
+          <p>No. Mandar el pedido no te compromete a nada: es para que veamos juntas el stock y la entrega. Pagás recién cuando confirmamos todo.</p>
+        </details>
+        <details>
+          <summary>No sé mi talle, ¿me ayudan?</summary>
+          <p>Claro. Mirá la <a href="#talles">guía de talles</a> o escribinos tus medidas por WhatsApp y te recomendamos el que mejor te queda.</p>
+        </details>
+      </div>
+    </section>
+
+    <!-- Redes -->
+    <section class="redes" aria-labelledby="redes-titulo">
+      <div class="feston feston--arriba" aria-hidden="true"></div>
+      <div class="redes__cuerpo">
+        <div class="contenedor redes__fila">
+          <div>
+            <h2 id="redes-titulo" class="titulo-seccion">Lo nuevo sale primero en las historias</h2>
+            <p>Ingresos, reposiciones y combinaciones las mostramos en Instagram y TikTok.</p>
+          </div>
+          <div class="redes__botones">
+            <a class="btn btn--principal" data-link="instagram" href="https://www.instagram.com/bel.intimma/" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".6" fill="currentColor"/></svg>
+              Seguinos en Instagram
+            </a>
+            <a class="btn btn--contorno" data-link="tiktok" href="https://www.tiktok.com/@bel.intimma" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5"/><path d="M14 3c.4 2.6 2.2 4.4 5 4.6"/></svg>
+              Ver en TikTok
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="pie">
+    <div class="contenedor pie__fila">
+      <p class="logotipo logotipo--pie" translate="no">bel.intimma</p>
+      <p class="pie__dato">Ropa interior y pijamas desde <span data-zona>Gral. San Martín, Buenos Aires</span>.</p>
+      <ul class="pie__links">
+        <li><a data-link="whatsapp" href="#" target="_blank" rel="noopener">WhatsApp</a></li>
+        <li><a data-link="instagram" href="https://www.instagram.com/bel.intimma/" target="_blank" rel="noopener">Instagram</a></li>
+        <li><a data-link="tiktok" href="https://www.tiktok.com/@bel.intimma" target="_blank" rel="noopener">TikTok</a></li>
+      </ul>
+      <p class="pie__chico">© <span data-anio>2026</span> Bel Intimma</p>
+    </div>
+  </footer>
+
+  <!-- Barra fija del pedido (celular) -->
+  <div class="barra-pedido" data-barra hidden>
+    <div class="barra-pedido__info">
+      <span data-barra-cantidad></span>
+      <strong data-barra-total></strong>
+    </div>
+    <button class="btn btn--principal" type="button" data-abrir="pedido">Ver mi pedido</button>
+  </div>
+
+  <!-- Aviso al agregar -->
+  <div class="tostada" data-tostada role="status" aria-live="polite"></div>
+
+  <!-- Ficha de producto -->
+  <dialog class="hoja hoja--producto" data-dialogo="producto" aria-labelledby="ficha-nombre">
+    <form method="dialog" class="hoja__cerrar-form">
+      <button class="icono-btn hoja__cerrar" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </form>
+    <div class="ficha" data-ficha></div>
+  </dialog>
+
+  <!-- Pedido -->
+  <dialog class="hoja hoja--pedido" data-dialogo="pedido" aria-labelledby="pedido-titulo">
+    <div class="pedido">
+      <div class="pedido__cabeza">
+        <h2 id="pedido-titulo">Tu pedido</h2>
+        <form method="dialog">
+          <button class="icono-btn" aria-label="Cerrar pedido">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+          </button>
+        </form>
+      </div>
+
+      <div class="pedido__vacio" data-pedido-vacio>
+        <div class="pedido__vacio-dibujo" data-dibujo-vacio aria-hidden="true"></div>
+        <p>Tu pedido está vacío.</p>
+        <p class="info__nota">Elegí una prenda del catálogo, sumala y la vas a ver acá.</p>
+        <button class="btn btn--principal" type="button" data-ir-catalogo>Ir al catálogo</button>
+      </div>
+
+      <div class="pedido__lleno" data-pedido-lleno hidden>
+        <ul class="pedido__items" data-items></ul>
+
+        <form class="pedido__form" data-form-pedido novalidate>
+          <div class="campo">
+            <label for="p-nombre">Tu nombre</label>
+            <input id="p-nombre" name="nombre" type="text" autocomplete="given-name" placeholder="Ej: Sofía…" required>
+            <p class="campo__error" id="p-nombre-error" hidden>Escribí tu nombre así sabemos quién hace el pedido.</p>
+          </div>
+
+          <fieldset class="campo">
+            <legend>Entrega</legend>
+            <div class="opciones" data-opciones-entrega></div>
+          </fieldset>
+
+          <div class="campo" data-campo-direccion hidden>
+            <label for="p-zona">Localidad o barrio</label>
+            <input id="p-zona" name="zona" type="text" autocomplete="address-level2" placeholder="Ej: Villa Ballester…">
+          </div>
+
+          <div class="campo">
+            <label for="p-pago">Cómo querés pagar</label>
+            <select id="p-pago" name="pago" data-select-pago></select>
+          </div>
+
+          <div class="pedido__total">
+            <span>Total</span>
+            <strong data-total></strong>
+          </div>
+          <p class="info__nota" data-total-nota hidden></p>
+
+          <button class="btn btn--principal btn--ancho btn--wa" type="submit">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.2-4A8 8 0 1 1 8.4 19L4 20Z"/><path d="M9 9.2c.2 2.3 2.4 4.6 4.8 4.8l1-1.1 1.7.8-.3 1.5c-3.7.5-7.9-3.5-7.4-7.4L10.3 7.5l.8 1.7-1 1"/></svg>
+            Enviar pedido por WhatsApp
+          </button>
+          <p class="pedido__aclaracion">Se abre WhatsApp con el mensaje listo. Pagás recién cuando confirmamos stock y entrega.</p>
+
+          <div class="pedido__enviado" data-enviado role="status" hidden>
+            <p>Abrimos WhatsApp con tu pedido. Si ya lo mandaste, podés vaciar la lista; si no, sigue guardada acá.</p>
+            <button class="link-btn" type="button" data-vaciar>Vaciar pedido</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Menú (celular) -->
+  <dialog class="hoja hoja--menu" data-dialogo="menu" aria-label="Menú">
+    <div class="menu">
+      <div class="pedido__cabeza">
+        <p class="logotipo" translate="no">bel.intimma</p>
+        <form method="dialog">
+          <button class="icono-btn" aria-label="Cerrar menú">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+          </button>
+        </form>
+      </div>
+      <nav aria-label="Menú">
+        <ul class="menu__lista" data-menu-lista>
+          <li><a href="#catalogo">Catálogo</a></li>
+          <li><a href="#como-comprar">Cómo comprar</a></li>
+          <li><a href="#talles">Guía de talles</a></li>
+          <li><a href="#pagos">Pagos y entregas</a></li>
+          <li><a href="#preguntas">Preguntas frecuentes</a></li>
+        </ul>
+      </nav>
+      <a class="btn btn--contorno btn--ancho" data-link="whatsapp" href="#" target="_blank" rel="noopener">Escribinos por WhatsApp</a>
+    </div>
+  </dialog>
+
+  <script src="js/config.js"></script>
+  <script src="js/productos.js"></script>
+  <script src="js/dibujos.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
