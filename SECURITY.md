@@ -1,7 +1,8 @@
 # Seguridad — Bel Intimma
 
-La tienda es un sitio estático: no tiene servidor, base de datos, usuarios ni pagos online.
-Eso ya la hace muy difícil de atacar. Lo que sigue cubre los riesgos que sí existen y cómo
+La tienda es un sitio estático: no tiene servidor, base de datos ni pagos online. El panel de
+administración tampoco tiene servidor propio: guarda directamente en GitHub con la cuenta de quien
+edita. Eso deja muy poco para atacar. Lo que sigue cubre los riesgos que sí existen y cómo
 están resueltos.
 
 ---
@@ -10,19 +11,25 @@ están resueltos.
 
 | Riesgo | Cómo se resolvió |
 |---|---|
-| **Inyección de código (XSS)** desde el catálogo, la configuración, la URL o el carrito guardado | Todo lo que se muestra se escapa. Además `js/app.js` valida cada dato al cargar: tipos, largos máximos, ids, precios y categorías. Lo que no cumple se descarta y se avisa en la consola (F12). |
+| **Inyección de código (XSS)** desde el catálogo, los textos del panel, la URL o el carrito guardado | Todo lo que se muestra se escapa (los textos del panel son texto plano, sin HTML ni Markdown). Además `js/app.js` valida cada dato al cargar: tipos, largos máximos, ids, precios y categorías. Lo que no cumple se descarta y se avisa en la consola (F12). |
+| **Alguien que no es la dueña entra al panel** | El panel no tiene usuarios propios: solo entran cuentas de GitHub con permiso de escritura en el repositorio. Sin ese permiso, `/admin/` muestra solo la pantalla de inicio de sesión. La seguridad depende de esas cuentas de GitHub (ver la checklist: 2FA). |
+| **Un cambio malicioso o por error** | Cada "Guardar" es un commit firmado en GitHub: queda quién cambió qué y se puede revertir. Netlify guarda todas las publicaciones anteriores y permite volver a una con un clic (*Deploys → Publish deploy*). |
 | **Fotos con rutas peligrosas** (`javascript:`, `../`, sitios externos) | Solo se aceptan archivos `.jpg/.png/.webp/.avif` dentro de `img/`. |
 | **Carrito manipulado** (el localStorage lo puede editar cualquiera en su navegador) | Cada ítem se reconstruye desde el catálogo: solo valen productos que existen, con talles y colores que ese producto tiene, y cantidades de 1 a 20. Lo manipulado se borra. |
 | **Mensaje de WhatsApp alterado** | El texto va codificado con `encodeURIComponent`. El total se calcula desde el catálogo al enviar. El nombre y la localidad pierden los saltos de línea y los símbolos de formato (`*`, `_`, `~`, `` ` ``), y tienen largo máximo. Entrega y medio de pago solo aceptan opciones de `config.js`. Hay una pausa contra el doble toque. |
-| **Scripts o estilos de terceros** | No hay ninguno: las fuentes (`fonts/`) y Three.js (`js/vendor/`) están alojados en el sitio. La página no hace ningún pedido a otros servidores. |
+| **Scripts o estilos de terceros** | No hay ninguno: las fuentes (`fonts/`) y Three.js (`js/vendor/`) están alojados en el sitio. La página no hace ningún pedido a otros servidores. El panel también se compila y se sirve desde el sitio (paquete npm de Sveltia CMS, sin CDNs) y solo se conecta con la API de GitHub. |
+| **Paquetes npm comprometidos o desactualizados** (cadena de suministro del panel) | Versiones exactas fijadas en `panel/package-lock.json`, con hash de integridad que `npm ci` verifica en cada publicación. Dependabot propone las actualizaciones (con vista previa en Netlify) en lugar de instalarlas solas. El código del panel no se carga en la página pública. |
 | **Clickjacking, sniffing, filtración de referrer, permisos del navegador** | Headers de seguridad en `_headers` (Netlify). |
-| **HTTPS** | Netlify lo fuerza solo, y el header HSTS hace que el navegador nunca vuelva a usar http. `upgrade-insecure-requests` en la CSP. En GitHub Pages: *Enforce HTTPS*. |
+| **HTTPS** | Netlify lo fuerza solo, y el header HSTS hace que el navegador nunca vuelva a usar http. `upgrade-insecure-requests` en la CSP. |
 | **Links externos** | Todos con `rel="noopener noreferrer"`. |
-| **Metadatos en las fotos** (ubicación GPS de tu casa, modelo de celular, fecha) | `scripts/limpiar_fotos.py` los borra. `scripts/preparar_publicacion.py` (y Netlify al publicar) **frena la publicación** si encuentra una foto con metadatos. |
-| **Archivos que no deberían subirse** | `.gitignore` deja afuera claves (`.env`, `*.key`), capturas, originales `.heic`, `logo.webp` y archivos del sistema. Para Netlify solo se publica una lista blanca de archivos (`publicar/`). |
+| **Metadatos en las fotos** (ubicación GPS de tu casa, modelo de celular, fecha) | El panel convierte cada foto **en el navegador, antes de subirla**: la pasa a WebP, la achica a 1600 px y le borra los metadatos (probado con una foto con GPS: el archivo subido no tiene EXIF). Solo acepta JPG, PNG, WebP y HEIC (sin SVG ni GIF). Para fotos subidas a mano, `scripts/limpiar_fotos.py` los borra. Y `scripts/preparar_publicacion.py` (que Netlify ejecuta al publicar) **frena la publicación** si encuentra una foto con metadatos. |
+| **Archivos que no deberían subirse** | `.gitignore` deja afuera claves (`.env`, `*.key`), capturas, originales `.heic`, `logo.webp`, `node_modules/` y archivos del sistema. Para Netlify solo se publica una lista blanca de archivos (`publicar/`): ni `datos/` en crudo, ni `scripts/`, ni los `.md`. |
+| **Imágenes que ejecutan código** (un SVG abierto directamente) | El panel no acepta SVG. Además `/img/*` tiene su propia CSP con `sandbox`: aunque alguien subiera un archivo así, no puede ejecutar nada. |
 | **Spam en el formulario** | El formulario no envía nada a ningún servidor: solo abre WhatsApp en el celular de la clienta. No hay una casilla que un bot pueda llenar en masa. Igual tiene largo máximo y pausa contra envíos repetidos. |
 
 ### La política de contenido (CSP)
+
+**Página (`/`):**
 
 ```
 default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:;
@@ -33,9 +40,27 @@ form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests
 Sin `'unsafe-inline'` ni `'unsafe-eval'`: aunque alguien lograra meter HTML en la página, el navegador
 no ejecutaría ningún script ni estilo que no venga de tus propios archivos.
 
-> **Si agregás algo externo** (por ejemplo, un video de YouTube o fotos alojadas en otro sitio), el
-> navegador lo va a bloquear. Hay que sumar ese dominio a la CSP en **dos lugares**: `_headers` y
-> el `<meta http-equiv="Content-Security-Policy">` de `index.html`.
+**Panel (`/admin/`)**, con lo mínimo que necesita el editor:
+
+```
+script-src 'self' 'wasm-unsafe-eval';             conversor de fotos (WebAssembly), sin eval de JS
+style-src 'self' 'unsafe-inline';                 estilos de la interfaz del editor (no scripts)
+connect-src 'self' blob: data: https://api.github.com https://www.githubstatus.com
+img-src 'self' blob: data: https://*.githubusercontent.com   (avatares de GitHub)
+frame-ancestors 'none'; object-src 'none'; base-uri 'none'; form-action 'none'
+```
+
+Además: `Cross-Origin-Opener-Policy: same-origin-allow-popups` (el inicio de sesión abre una ventana
+de Netlify) y `X-Robots-Tag: noindex` (que no aparezca en Google).
+
+> En `_headers`, la CSP va en reglas separadas para `/`, `/admin/*` e `/img/*`. Si dos reglas que
+> coinciden con la misma ruta definieran el mismo header, Netlify los juntaría y el navegador
+> aplicaría los dos a la vez.
+
+> **Si agregás algo externo** a la página (por ejemplo, un video de YouTube o fotos alojadas en otro
+> sitio), el navegador lo va a bloquear. Hay que sumar ese dominio a la CSP en **tres lugares**: las
+> reglas `/` e `/index.html` de `_headers` y el `<meta http-equiv="Content-Security-Policy">` de
+> `index.html`.
 
 ### Límites que conviene conocer
 
@@ -44,7 +69,13 @@ no ejecutaría ningún script ni estilo que no venga de tus propios archivos.
 - **Tu número de WhatsApp es público** (está en la página, como en cualquier tienda que vende por
   WhatsApp). Si preferís no exponer tu número personal, usá un número de WhatsApp Business.
 - **El mail con el que hacés commits queda visible** en el historial público de GitHub.
-  Ver la checklist de GitHub para ocultarlo en los próximos.
+  Ver la checklist de GitHub para ocultarlo en los próximos. Los commits del panel usan el mail de
+  la cuenta de quien edita: que la dueña también active *Keep my email addresses private*.
+- **El repositorio es público:** cualquiera puede ver el catálogo, las fotos y el historial (lo mismo
+  que ya muestra la página). Si preferís que no, en GitHub *Settings → General → Change visibility →
+  Private*. Netlify y el panel siguen funcionando igual.
+- **La sesión del panel queda guardada en el navegador** de quien edita. En una compu compartida,
+  cerrá sesión al terminar (menú de la cuenta → *Cerrar sesión*).
 
 ---
 
@@ -101,6 +132,17 @@ que te des cuenta. Es el riesgo más real que tiene la tienda.
 - [ ] Si trabajás en compus compartidas (instituto): cerrá sesión de GitHub en el navegador al
       terminar y no guardes la clave SSH en esa compu sin contraseña.
 
+### Panel de administración
+- [ ] La dueña tiene **su propia cuenta** de GitHub (no comparten una), con **2FA** y rol *Write*
+      en el repositorio (no *Admin*).
+- [ ] En el repo, *Settings → Collaborators*: solo las personas que editan. Sacá a quien ya no edite.
+- [ ] El *Client Secret* de la OAuth App está **solo** en Netlify (*Security → OAuth*). Nunca en el repo.
+- [ ] Si se pierde un celular con la sesión abierta: en esa cuenta de GitHub, *Settings → Applications
+      → Authorized OAuth Apps → Panel Bel Intimma → Revoke*, y cambiar la contraseña.
+- [ ] Opcional, más estricto: en GitHub *Settings → Developer settings → OAuth Apps → Panel Bel
+      Intimma* podés regenerar el secret cada tanto (y actualizarlo en Netlify).
+- [ ] Mergeá los pull requests de Dependabot del panel (actualizaciones de seguridad de Sveltia CMS).
+
 ### Netlify
 - [ ] **2FA activado** (*User settings → Security*).
 - [ ] Iniciá sesión con GitHub *o* con mail+contraseña, pero que esa cuenta tenga 2FA.
@@ -137,14 +179,15 @@ que te des cuenta. Es el riesgo más real que tiene la tienda.
 ## Cómo verificar los headers una vez publicada
 
 1. **securityheaders.com**: entrá a <https://securityheaders.com>, pegá la dirección
-   (`https://tu-sitio.netlify.app`) y tocá *Scan*. Con Netlify deberías ver **A+** (o como mínimo A) y todos los headers
+   (`https://belintimma.netlify.app`) y tocá *Scan*. Con Netlify deberías ver **A+** (o como mínimo A) y todos los headers
    en verde: Content-Security-Policy, Strict-Transport-Security, X-Frame-Options,
    X-Content-Type-Options, Referrer-Policy y Permissions-Policy.
 2. **Mozilla Observatory**: <https://developer.mozilla.org/en-US/observatory>. Da una nota y explica cada punto.
 3. **Desde la terminal:**
    ```bash
-   curl -sI https://tu-sitio.netlify.app | grep -iE "content-security|strict-transport|x-frame|x-content|referrer|permissions"
-   curl -sI http://tu-sitio.netlify.app | head -3   # tiene que responder 301 hacia https://
+   curl -sI https://belintimma.netlify.app | grep -iE "content-security|strict-transport|x-frame|x-content|referrer|permissions"
+   curl -sI https://belintimma.netlify.app/admin/ | grep -iE "content-security|robots|opener"   # CSP del panel
+   curl -sI http://belintimma.netlify.app | head -3   # tiene que responder 301 hacia https://
    ```
 4. **En el navegador:** F12 → pestaña *Red (Network)* → recargá → hacé clic en el documento principal →
    *Encabezados de respuesta*. En la pestaña *Consola* no debería aparecer ningún error que diga
@@ -152,10 +195,8 @@ que te des cuenta. Es el riesgo más real que tiene la tienda.
 5. **Fotos publicadas:** descargá una foto desde la página y subila a un visor de EXIF
    (por ejemplo <https://exif.tools>). No debería mostrar ubicación ni modelo de celular.
 
-> En **GitHub Pages**, securityheaders.com va a marcar que faltan headers, porque esa plataforma no deja
-> configurarlos. La CSP y la Referrer-Policy funcionan igual (están en `index.html`), pero
-> X-Frame-Options, Permissions-Policy y el resto solo están en Netlify.
-
 ### Si cambiás la CSP
-Probala con un servidor local (`python3 -m http.server 8000`), recorré la página completa y mirá
-que la consola no muestre errores de "Content Security Policy" antes de publicar.
+Probala con un servidor local (`python3 scripts/preparar_publicacion.py` y después
+`python3 -m http.server 8000 -d publicar`), recorré la página completa y el panel, y mirá que la
+consola no muestre errores de "Content Security Policy" antes de publicar. Ojo: el servidor local no
+envía los headers de `_headers`; solo aplica la CSP del `<meta>` de `index.html`.

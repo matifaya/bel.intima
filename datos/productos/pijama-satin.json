@@ -1,0 +1,20 @@
+{
+  "nombre": "Pijama Satín",
+  "categoria": "pijamas",
+  "precio": 32500,
+  "fotos": [],
+  "talles": [
+    "S",
+    "M",
+    "L"
+  ],
+  "colores": [
+    "Champagne",
+    "Rosa",
+    "Negro"
+  ],
+  "descripcion": "Camisa con botones y short de satén con ribete en contraste. Ideal para regalar.",
+  "etiqueta": "",
+  "disponible": true,
+  "orden": 9
+}

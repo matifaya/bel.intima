@@ -1,0 +1,21 @@
+{
+  "nombre": "Pijama Algodón Corazones",
+  "categoria": "pijamas",
+  "precio": 25900,
+  "precioAntes": 28500,
+  "fotos": [],
+  "talles": [
+    "M",
+    "L",
+    "XL",
+    "XXL"
+  ],
+  "colores": [
+    "Blanco y rosa",
+    "Gris y rosa"
+  ],
+  "descripcion": "Remera y short de algodón peinado con estampa de corazones. El de todos los días.",
+  "etiqueta": "Oferta",
+  "disponible": true,
+  "orden": 10
+}

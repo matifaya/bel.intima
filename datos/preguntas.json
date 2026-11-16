@@ -1,0 +1,24 @@
+{
+  "preguntas": [
+    {
+      "pregunta": "¿Cómo sé si hay stock de mi talle?",
+      "respuesta": "Cuando nos mandás el pedido por WhatsApp te confirmamos el stock antes de que pagues. Si algo no está, te ofrecemos otro color o talle parecido."
+    },
+    {
+      "pregunta": "¿Puedo cambiar una prenda?",
+      "respuesta": "Sí, coordinamos cambios de talle por WhatsApp. Por higiene, la prenda tiene que estar sin uso y con su etiqueta."
+    },
+    {
+      "pregunta": "¿Hacen envíos fuera de San Martín?",
+      "respuesta": "Sí. Enviamos a domicilio o por correo y te pasamos el costo según tu zona antes de cerrar el pedido."
+    },
+    {
+      "pregunta": "¿Tengo que pagar para enviar el pedido?",
+      "respuesta": "No. Mandar el pedido no te compromete a nada: es para que veamos juntas el stock y la entrega. Pagás recién cuando confirmamos todo."
+    },
+    {
+      "pregunta": "No sé mi talle, ¿me ayudan?",
+      "respuesta": "Claro. Mirá la guía de talles o escribinos tus medidas por WhatsApp y te recomendamos el que mejor te queda."
+    }
+  ]
+}

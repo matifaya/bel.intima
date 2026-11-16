@@ -1,14 +1,15 @@
 /* ==========================================================================
    Bel Intimma — lógica de la tienda
-   No hace falta editar este archivo para cargar productos:
-   usá js/productos.js y js/config.js.
+   No hace falta editar este archivo para cargar productos ni textos:
+   todo se edita desde el panel (/admin/), que guarda en la carpeta datos/.
+   scripts/preparar_publicacion.py lo junta en js/datos.js.
    ========================================================================== */
 
 (function () {
   "use strict";
 
   /* ---------- validación de datos ----------
-     Todo lo que viene de config.js, productos.js, la URL o el localStorage se
+     Todo lo que viene de datos.js (el panel), la URL o el localStorage se
      revisa acá antes de usarse: tipos, largos máximos y formatos permitidos.
      Un dato que no cumple se descarta (y se avisa en la consola) en lugar de
      llegar a la página. */
@@ -41,13 +42,36 @@
         dibujo: ["con-aro", "sin-aro", "pijama"].includes(x.dibujo) ? x.dibujo : "sin-aro"
       }));
     const entregas = (Array.isArray(cfg.entregas) ? cfg.entregas : [])
-      .filter((x) => x && ID_VALIDO.test(x.id))
-      .map((x) => ({ id: x.id, nombre: texto(x.nombre, 60), pideDireccion: x.pideDireccion === true }));
+      .filter((x) => x && texto(x.nombre, 60))
+      .slice(0, 5)
+      .map((x, i) => ({
+        id: typeof x.id === "string" && ID_VALIDO.test(x.id) ? x.id : `entrega-${i + 1}`,
+        nombre: texto(x.nombre, 60),
+        detalle: texto(x.detalle, 120),
+        pideDireccion: x.pideDireccion === true
+      }));
     const usuario = (v, campo) => {
       if (USUARIO_VALIDO.test(String(v || ""))) return String(v);
-      avisar(`El usuario de ${campo} en js/config.js no es válido.`);
+      avisar(`El usuario de ${campo} no es válido.`);
       return "bel.intimma";
     };
+    const objeto = (v) => (v && typeof v === "object" && !Array.isArray(v) ? v : {});
+    const tablas = (Array.isArray(objeto(cfg.talles).tablas) ? cfg.talles.tablas : [])
+      .filter((t) => t && typeof t === "object")
+      .slice(0, 6)
+      .map((t) => ({
+        titulo: texto(t.titulo, 60),
+        columnas: listaDeTextos(t.columnas, 30, 6),
+        filas: (Array.isArray(t.filas) ? t.filas : [])
+          .filter((f) => f && texto(f.talle, 12))
+          .slice(0, 20)
+          .map((f) => ({ talle: texto(f.talle, 12), medidas: listaDeTextos(f.medidas, 30, 6) }))
+      }))
+      .filter((t) => t.filas.length);
+    const preguntas = (Array.isArray(cfg.preguntas) ? cfg.preguntas : [])
+      .filter((x) => x && texto(x.pregunta, 120) && texto(x.respuesta, 600))
+      .slice(0, 20)
+      .map((x) => ({ pregunta: texto(x.pregunta, 120), respuesta: texto(x.respuesta, 600) }));
     const descuento = Number(cfg.descuentoTransferencia);
     return {
       nombre: texto(cfg.nombre, 40) || "Bel Intimma",
@@ -55,16 +79,20 @@
       instagram: usuario(cfg.instagram, "Instagram"),
       tiktok: usuario(cfg.tiktok, "TikTok"),
       zona: texto(cfg.zona, 80),
+      heroTitulo: texto(cfg.heroTitulo, 90),
+      heroBajada: texto(cfg.heroBajada, 240),
       descuentoTransferencia: Number.isFinite(descuento) && descuento > 0 && descuento < 100 ? Math.round(descuento) : 0,
       mediosDePago: listaDeTextos(cfg.mediosDePago, 40, 10),
-      entregas: entregas.length ? entregas : [{ id: "retiro", nombre: "Retiro", pideDireccion: false }],
+      entregas: entregas.length ? entregas : [{ id: "retiro", nombre: "Retiro", detalle: "", pideDireccion: false }],
       avisos: listaDeTextos(cfg.avisos, 90, 6),
-      categorias
+      categorias,
+      talles: { nota: texto(objeto(cfg.talles).nota, 300), tablas },
+      preguntas
     };
   }
 
   function validarProductos(lista, categorias) {
-    if (!Array.isArray(lista)) { avisar("js/productos.js no tiene una lista de productos."); return []; }
+    if (!Array.isArray(lista)) { avisar("No se encontró la lista de productos (js/datos.js)."); return []; }
     const vistos = new Set();
     return lista.flatMap((p, n) => {
       const pos = `Producto #${n + 1}`;
@@ -72,7 +100,7 @@
       if (p.disponible === false) return [];
       if (!ID_VALIDO.test(String(p.id))) { avisar(`${pos}: el id "${texto(p.id, 60)}" solo puede tener minúsculas, números y guiones.`); return []; }
       if (vistos.has(p.id)) { avisar(`${pos}: el id "${p.id}" está repetido.`); return []; }
-      if (!categorias.some((c) => c.id === p.categoria)) { avisar(`${p.id}: la categoría "${texto(p.categoria, 40)}" no existe en js/config.js.`); return []; }
+      if (!categorias.some((c) => c.id === p.categoria)) { avisar(`${p.id}: la categoría "${texto(p.categoria, 40)}" no existe.`); return []; }
       const precio = numeroPositivo(p.precio);
       if (!precio) { avisar(`${p.id}: el precio tiene que ser un número sin puntos ni $.`); return []; }
       const fotos = Array.isArray(p.fotos) ? p.fotos.filter((f) => fotoValida(f) || (avisar(`${p.id}: se ignoró la foto "${texto(f, 80)}" (tiene que estar en img/ y ser jpg, png, webp o avif).`), false)) : [];
@@ -237,6 +265,43 @@
       const nota = $("[data-nota-descuento]");
       nota.textContent = `Pagando con transferencia o efectivo tenés ${T.descuentoTransferencia}% de descuento.`;
       nota.hidden = false;
+    }
+  }
+
+  /* ---------- textos editables desde el panel ----------
+     Si un dato falta, queda el texto que ya trae index.html. */
+
+  function iniciarTextos() {
+    if (T.heroTitulo) $("#hero-titulo").textContent = T.heroTitulo;
+    if (T.heroBajada) $(".hero__bajada").textContent = T.heroBajada;
+
+    // Entregas: el ícono depende de si se envía (camión) o se retira (ubicación)
+    const ICONO_RETIRO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg>';
+    const ICONO_ENVIO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.5"/><circle cx="17" cy="17.5" r="1.5"/></svg>';
+    $("[data-entregas]").innerHTML = T.entregas.map((e) => `<li>${e.pideDireccion ? ICONO_ENVIO : ICONO_RETIRO}
+      <div><strong>${escapar(e.nombre)}</strong>${e.detalle ? `<span>${escapar(e.detalle)}</span>` : ""}</div></li>`).join("");
+
+    const { nota, tablas } = T.talles;
+    $("[data-talles-nota]").textContent = nota;
+    $("[data-talles-nota]").hidden = !nota;
+    $("[data-tablas-talles]").innerHTML = tablas.map((t) => {
+      const columnas = ["Talle", ...t.columnas];
+      return `<div class="tabla-envoltura" tabindex="0" role="region" aria-label="${escapar(t.titulo ? `Tabla de talles: ${t.titulo}` : "Tabla de talles")}">
+        <table class="tabla">
+          ${t.titulo ? `<caption>${escapar(t.titulo)}</caption>` : ""}
+          <thead><tr>${columnas.map((c) => `<th scope="col">${escapar(c)}</th>`).join("")}</tr></thead>
+          <tbody>${t.filas.map((f) => `<tr><th scope="row">${escapar(f.talle)}</th>${
+            t.columnas.map((_, i) => `<td>${escapar(f.medidas[i] || "")}</td>`).join("")}</tr>`).join("")}</tbody>
+        </table>
+      </div>`;
+    }).join("");
+
+    // Sin preguntas cargadas, la sección (y sus accesos) no se muestran
+    $("[data-preguntas]").innerHTML = T.preguntas.map((x) =>
+      `<details><summary>${escapar(x.pregunta)}</summary><p>${escapar(x.respuesta)}</p></details>`).join("");
+    if (!T.preguntas.length) {
+      $("#preguntas").hidden = true;
+      $$('a[href="#preguntas"]').forEach((a) => (a.closest("li") || a).remove());
     }
   }
 
@@ -694,7 +759,7 @@
         return;
       }
       if (!whatsappConfigurado()) {
-        mostrarTostada("Falta cargar el número de WhatsApp en js/config.js", false);
+        mostrarTostada("Falta cargar el número de WhatsApp en el panel", false);
         return;
       }
       // Evita abrir WhatsApp varias veces por un doble toque
@@ -821,6 +886,7 @@
   iniciarLinks();
   iniciarAvatar();
   iniciarDestacados();
+  iniciarTextos(); // después de los destacados: puede ocultar el acceso a "Preguntas"
   const categoriaInicial = new URLSearchParams(location.search).get("categoria");
   if (categoriaInicial && categoria(categoriaInicial)) filtrar(categoriaInicial, { alternar: false });
   else renderGrilla();
@@ -832,6 +898,6 @@
   iniciarRutas();
 
   if (!whatsappConfigurado()) {
-    console.warn("[Bel Intimma] Cargá el número de WhatsApp en js/config.js para recibir pedidos.");
+    console.warn("[Bel Intimma] Cargá el número de WhatsApp en el panel (Datos de la tienda) para recibir pedidos.");
   }
 })();

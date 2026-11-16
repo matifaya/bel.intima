@@ -1,0 +1,33 @@
+{
+  "nombre": "Bel Intimma",
+  "whatsapp": "5491158177799",
+  "instagram": "bel.intimma",
+  "tiktok": "bel.intimma",
+  "zona": "Gral. San Martín, Buenos Aires",
+  "heroTitulo": "Lencería y pijamas para sentirte linda todos los días",
+  "heroBajada": "Conjuntos con y sin aro y pijamas suaves, elegidos uno por uno en Gral. San Martín. Armás tu pedido acá y lo confirmamos por WhatsApp.",
+  "avisos": [
+    "Aceptamos todos los medios de pago",
+    "Retiro en Gral. San Martín y envíos a coordinar",
+    "Consultá talles por WhatsApp, te asesoramos"
+  ],
+  "descuentoTransferencia": 0,
+  "mediosDePago": [
+    "Transferencia",
+    "Mercado Pago",
+    "Efectivo",
+    "Tarjetas de débito y crédito"
+  ],
+  "entregas": [
+    {
+      "nombre": "Retiro en Gral. San Martín",
+      "detalle": "Sin cargo. Coordinamos día y horario.",
+      "pideDireccion": false
+    },
+    {
+      "nombre": "Envío a domicilio",
+      "detalle": "A domicilio o por correo. Te pasamos el costo según tu zona.",
+      "pideDireccion": true
+    }
+  ]
+}

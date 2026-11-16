@@ -1,30 +1,40 @@
 #!/usr/bin/env python3
 """
-Arma la carpeta "publicar/" con SOLO los archivos que forman parte de la página,
-lista para subir a Netlify (arrastrándola a app.netlify.com/drop).
+Arma la carpeta "publicar/" con SOLO los archivos que forman parte de la página.
 
     python3 scripts/preparar_publicacion.py
 
-Netlify también lo ejecuta solo cuando el sitio está conectado al repo de GitHub
-(ver netlify.toml).
+Netlify lo ejecuta solo en cada publicación (ver netlify.toml), después de
+compilar el panel de administración.
 
-Antes de copiar, revisa que:
-  - ninguna foto tenga metadatos (EXIF, ubicación GPS, XMP, comentarios);
-  - el número de WhatsApp esté cargado en js/config.js.
-Si una foto tiene metadatos, se frena: no se publica nada hasta limpiarla con
-    python3 scripts/limpiar_fotos.py
+Qué hace:
+  1. Revisa que ninguna foto tenga metadatos (EXIF, ubicación GPS, XMP, comentarios).
+     Si encuentra una, frena: no se publica nada hasta limpiarla con
+         python3 scripts/limpiar_fotos.py
+  2. Junta los datos que se editan desde el panel (carpeta datos/: productos,
+     categorías, contacto, talles, preguntas) en un solo archivo, js/datos.js.
+  3. Copia la lista blanca de archivos de la página y el panel ya compilado
+     (panel/dist/ -> admin/).
+
+Para ver la página en tu compu:
+    python3 scripts/preparar_publicacion.py
+    python3 -m http.server 8000 -d publicar
 
 No necesita instalar nada (solo Python 3).
 """
 
+import json
 import re
 import shutil
 import struct
 import sys
+import unicodedata
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
 DESTINO = RAIZ / "publicar"
+DATOS = RAIZ / "datos"
+PANEL = RAIZ / "panel" / "dist"
 
 # Lista blanca: solo esto se publica. Todo lo demás (README, DESIGN.md, scripts,
 # .git, capturas, originales) queda afuera.
@@ -108,11 +118,98 @@ def revisar_fotos() -> bool:
     return ok
 
 
-def revisar_config() -> None:
-    config = (RAIZ / "js" / "config.js").read_text(encoding="utf-8")
-    numero = re.search(r'whatsapp:\s*"([^"]*)"', config)
-    if not numero or not re.fullmatch(r"\d{10,15}", numero.group(1)):
-        print("  ! Aviso: el número de WhatsApp de js/config.js todavía no está cargado.")
+# ---------------------------------------------------------------------------
+# Datos del panel -> js/datos.js
+# Acá solo se juntan y ordenan. La validación fuerte (tipos, largos, rutas de
+# fotos) la hace js/app.js en el navegador, que descarta lo que no cumple.
+# ---------------------------------------------------------------------------
+
+def a_id(texto) -> str:
+    """'Conjunto Ámbar' -> 'conjunto-ambar' (minúsculas, números y guiones)."""
+    s = unicodedata.normalize("NFKD", str(texto or "")).encode("ascii", "ignore").decode().lower()
+    return re.sub(r"[^a-z0-9]+", "-", s).strip("-")[:60].strip("-")
+
+
+def leer_json(ruta: Path, defecto):
+    try:
+        datos = json.loads(ruta.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        print(f"  ! Aviso: falta {ruta.relative_to(RAIZ)}")
+        return defecto
+    except (json.JSONDecodeError, UnicodeDecodeError) as error:
+        print(f"  ! Aviso: {ruta.relative_to(RAIZ)} está dañado y se ignoró ({error})")
+        return defecto
+    if not isinstance(datos, type(defecto)):
+        print(f"  ! Aviso: {ruta.relative_to(RAIZ)} no tiene el formato esperado y se ignoró")
+        return defecto
+    return datos
+
+
+def leer_carpeta(nombre: str) -> list[dict]:
+    """Lee una carpeta de entradas (un .json por producto o categoría), en el orden del panel."""
+    entradas, vistos = [], set()
+    for ruta in sorted((DATOS / nombre).glob("*.json")):
+        datos = leer_json(ruta, {})
+        base = a_id(ruta.stem)
+        if not datos or not base:
+            continue
+        ident, n = base, 2
+        while ident in vistos:  # dos archivos que dan el mismo id
+            ident, n = f"{base[:56]}-{n}", n + 1
+        vistos.add(ident)
+        orden = datos.get("orden")
+        clave = orden if isinstance(orden, (int, float)) and not isinstance(orden, bool) else float("inf")
+        entradas.append((clave, str(datos.get("nombre", "")).lower(), ident, datos))
+    return [(ident, datos) for _, _, ident, datos in sorted(entradas, key=lambda e: e[:2])]
+
+
+def ruta_foto(valor) -> str:
+    # El panel guarda "/img/productos/foto.webp"; la página usa rutas relativas
+    return str(valor or "").lstrip("/")
+
+
+def armar_datos() -> str:
+    tienda = leer_json(DATOS / "tienda.json", {})
+    tienda["categorias"] = [
+        {"id": ident, "nombre": d.get("nombre"), "corto": d.get("corto"), "dibujo": d.get("dibujo")}
+        for ident, d in leer_carpeta("categorias")
+    ]
+    talles = leer_json(DATOS / "talles.json", {})
+    tienda["talles"] = {"nota": talles.get("nota"), "tablas": talles.get("tablas")}
+    tienda["preguntas"] = leer_json(DATOS / "preguntas.json", {}).get("preguntas")
+
+    productos = []
+    for ident, d in leer_carpeta("productos"):
+        fotos = [ruta_foto(f) for f in d.get("fotos") or [] if isinstance(f, str)] if isinstance(d.get("fotos"), list) else []
+        for foto in fotos:
+            if not (RAIZ / foto).is_file():
+                print(f"  ! Aviso: {ident} usa la foto {foto}, que no existe")
+        productos.append({
+            "id": ident,
+            "nombre": d.get("nombre"),
+            "categoria": a_id(d.get("categoria")),
+            "precio": d.get("precio"),
+            "precioAntes": d.get("precioAntes"),
+            "talles": d.get("talles"),
+            "colores": d.get("colores"),
+            "fotos": fotos,
+            "descripcion": d.get("descripcion"),
+            "etiqueta": d.get("etiqueta"),
+            "disponible": d.get("disponible", True) is not False,
+        })
+
+    if not re.fullmatch(r"\d{10,15}", str(tienda.get("whatsapp", ""))):
+        print("  ! Aviso: el número de WhatsApp todavía no está cargado (Panel → Datos de la tienda).")
+    visibles = sum(p["disponible"] for p in productos)
+    print(f"  {len(productos)} productos ({visibles} visibles), {len(tienda['categorias'])} categorías")
+
+    a_js = lambda v: json.dumps(v, ensure_ascii=False, indent=1)
+    return (
+        "/* Archivo generado por scripts/preparar_publicacion.py a partir de datos/.\n"
+        "   No se edita a mano: los cambios se hacen desde el panel (/admin/). */\n"
+        f"window.TIENDA = {a_js(tienda)};\n"
+        f"window.PRODUCTOS = {a_js(productos)};\n"
+    )
 
 
 def main() -> int:
@@ -121,7 +218,8 @@ def main() -> int:
         print("\nHay fotos con metadatos (pueden incluir la ubicación donde se sacaron).")
         print("Limpialas con:  python3 scripts/limpiar_fotos.py   y volvé a ejecutar este script.")
         return 1
-    revisar_config()
+    print("Juntando los datos del panel...")
+    datos_js = armar_datos()
 
     if DESTINO.exists():
         shutil.rmtree(DESTINO)
@@ -139,8 +237,18 @@ def main() -> int:
                 shutil.copy2(archivo, destino)
                 copiados += 1
 
-    print(f"\nListo: {copiados} archivos en {DESTINO.relative_to(RAIZ)}/")
-    print("Para Netlify Drop: arrastrá esa carpeta a https://app.netlify.com/drop")
+    (DESTINO / "js" / "datos.js").write_text(datos_js, encoding="utf-8")
+    copiados += 1
+
+    if (PANEL / "index.html").is_file():
+        shutil.copytree(PANEL, DESTINO / "admin")
+        print("  Panel de administración incluido en admin/")
+    else:
+        print("  ! El panel no está compilado (panel/dist/): se publica sin /admin/.")
+        print("    Para compilarlo: cd panel && npm ci && npm run build")
+
+    print(f"\nListo: {copiados} archivos de la página en {DESTINO.relative_to(RAIZ)}/")
+    print("Para verla: python3 -m http.server 8000 -d publicar")
     return 0
 
 

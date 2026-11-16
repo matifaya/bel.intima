@@ -1,9 +1,14 @@
-# Configuración para cuando el sitio se publica conectando el repositorio de GitHub a Netlify.
-# Netlify ejecuta el script, que arma la carpeta "publicar/" solo con los archivos públicos
-# (sin README, DESIGN.md, scripts ni nada que no forme parte de la página) y verifica
-# que las fotos no tengan metadatos.
+# Configuración de Netlify (el sitio está conectado al repositorio de GitHub).
+# En cada publicación Netlify:
+#   1. compila el panel de administración (panel/ -> panel/dist/) con las versiones
+#      exactas de panel/package-lock.json (npm ci verifica la integridad de cada paquete);
+#   2. ejecuta el script que arma "publicar/" solo con los archivos públicos, junta los
+#      datos que se editan desde el panel (datos/) y frena si una foto tiene metadatos.
 [build]
-  command = "python3 scripts/preparar_publicacion.py"
+  command = "npm ci --prefix panel --no-audit --no-fund && npm run build --prefix panel && python3 scripts/preparar_publicacion.py"
   publish = "publicar"
+
+[build.environment]
+  NODE_VERSION = "22"
 
 # Los headers de seguridad están en el archivo _headers (se copia a "publicar/").

@@ -1,0 +1,19 @@
+{
+  "nombre": "Conjunto Rosa Mosqueta",
+  "categoria": "con-aro",
+  "precio": 24500,
+  "fotos": [],
+  "talles": [
+    "85",
+    "90",
+    "95"
+  ],
+  "colores": [
+    "Rosa viejo",
+    "Nude"
+  ],
+  "descripcion": "Balconette con aro y push up suave. Breteles regulables y desmontables. Bombacha vedetina de tul bordado.",
+  "etiqueta": "Últimos",
+  "disponible": true,
+  "orden": 6
+}

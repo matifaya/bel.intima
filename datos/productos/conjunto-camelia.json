@@ -1,0 +1,21 @@
+{
+  "nombre": "Conjunto Camelia",
+  "categoria": "con-aro",
+  "precio": 23800,
+  "fotos": [],
+  "talles": [
+    "90",
+    "95",
+    "100",
+    "105"
+  ],
+  "colores": [
+    "Blanco",
+    "Negro",
+    "Rojo"
+  ],
+  "descripcion": "Corpiño con aro de taza entera, buena contención para talles grandes. Bombacha culotte de encaje.",
+  "etiqueta": "",
+  "disponible": true,
+  "orden": 7
+}

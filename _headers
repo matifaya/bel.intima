@@ -1,23 +1,58 @@
 # Headers de seguridad para Netlify (este archivo lo lee Netlify automáticamente).
-# GitHub Pages no soporta headers propios: ahí solo aplica la CSP y la Referrer-Policy
-# que también están como <meta> en index.html.
+#
+# Ojo: si dos reglas que coinciden con la misma ruta definen el mismo header,
+# Netlify los junta y el navegador aplica los dos. Por eso la política de contenido
+# (CSP) y la Cross-Origin-Opener-Policy van SOLO en reglas que no se pisan:
+# la página (/), el panel (/admin/*) y las fotos (/img/*).
 
+# --- Todo el sitio -----------------------------------------------------------
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests
   Strict-Transport-Security: max-age=31536000; includeSubDomains
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: accelerometer=(), autoplay=(), browsing-topics=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), hid=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), serial=(), usb=(), xr-spatial-tracking=()
-  Cross-Origin-Opener-Policy: same-origin
   Cross-Origin-Resource-Policy: same-origin
   X-Permitted-Cross-Domain-Policies: none
 
-# Catálogo y configuración: que el navegador siempre consulte si hay una versión nueva
-# (así un precio actualizado se ve enseguida).
-/js/productos.js
+# --- La página (tienda) ------------------------------------------------------
+# Nada de terceros: solo archivos propios. Sin estilos ni scripts inline.
+/
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+  Cross-Origin-Opener-Policy: same-origin
+/index.html
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+  Cross-Origin-Opener-Policy: same-origin
+
+# --- Panel de administración (Sveltia CMS, alojado en el sitio) ---------------
+# Solo puede hablar con la API de GitHub (para guardar) y su página de estado.
+#  - 'wasm-unsafe-eval': el conversor de fotos a WebP/HEIC es WebAssembly.
+#  - 'unsafe-inline' solo en estilos (la interfaz del editor los usa); los scripts siguen bloqueados.
+#  - same-origin-allow-popups: el inicio de sesión con GitHub abre una ventana de Netlify.
+/admin/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https://*.githubusercontent.com; font-src 'self'; connect-src 'self' blob: data: https://api.github.com https://www.githubstatus.com; media-src blob:; frame-src blob:; worker-src 'self' blob:; manifest-src blob:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
+  X-Robots-Tag: noindex, nofollow
+# La página del panel y su configuración se revisan siempre; el código (con nombres
+# que cambian en cada versión) se guarda en caché.
+/admin/
   Cache-Control: no-cache
-/js/config.js
+/admin/index.html
+  Cache-Control: no-cache
+/admin/config.yml
+  Cache-Control: no-cache
+/admin/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# --- Fotos ---------------------------------------------------------------------
+# Si alguien abriera una imagen directamente, no puede ejecutar nada.
+/img/*
+  Content-Security-Policy: default-src 'none'; img-src 'self'; style-src 'unsafe-inline'; sandbox
+
+# --- Caché -----------------------------------------------------------------------
+# Catálogo y datos de la tienda: que el navegador siempre consulte si hay una versión
+# nueva (así un precio cambiado desde el panel se ve enseguida).
+/js/datos.js
   Cache-Control: no-cache
 
 # Fuentes y Three.js no cambian: se pueden guardar en caché por un año.

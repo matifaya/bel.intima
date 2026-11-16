@@ -1,0 +1,330 @@
+# ==========================================================================
+# Panel de administración de Bel Intimma (Sveltia CMS)
+# Define qué puede editar la dueña desde https://belintimma.netlify.app/admin/
+# y cómo se guarda. Cada "Publicar" del panel es un commit en GitHub, y Netlify
+# vuelve a publicar la página sola en 1 o 2 minutos.
+# Documentación: https://sveltiacms.app/en/docs
+# ==========================================================================
+
+backend:
+  name: github
+  repo: matifaya/bel.intima
+  branch: main
+  # Sin base_url: el inicio de sesión usa el OAuth de Netlify (ver README).
+  commit_messages:
+    create: "Panel: agregar {{collection}} «{{slug}}»"
+    update: "Panel: editar {{collection}} «{{slug}}»"
+    delete: "Panel: borrar {{collection}} «{{slug}}»"
+    uploadMedia: "Panel: subir foto «{{path}}»"
+    deleteMedia: "Panel: borrar foto «{{path}}»"
+
+app_title: Panel Bel Intimma
+logo:
+  src: /img/favicon.svg
+site_url: https://belintimma.netlify.app
+display_url: https://belintimma.netlify.app
+logout_redirect_url: https://belintimma.netlify.app/
+
+# Fotos de productos
+media_folder: /img/productos
+public_folder: /img/productos
+
+media_libraries:
+  default:
+    config:
+      max_file_size: 30000000 # 30 MB antes de achicarla
+      # "Foto (1).JPG" -> "foto-1.webp": la página solo acepta nombres simples
+      slugify_filename: true
+      transformations:
+        # Toda foto se convierte en el navegador ANTES de subirse: pasa a WebP,
+        # se achica a 1600 px y pierde los metadatos (ubicación GPS, celular, fecha).
+        raster_image:
+          format: webp
+          quality: 82
+          width: 1600
+          height: 1600
+
+# Nombres de archivo: sin tildes ni espacios (también son el link de cada producto)
+slug:
+  encoding: ascii
+  clean_accents: true
+  sanitize_replacement: "-"
+  lowercase: true
+  maxlength: 50
+
+collections:
+  # ------------------------------------------------------------------------
+  - name: productos
+    label: Productos
+    label_singular: Producto
+    icon: apparel
+    description: >-
+      Arrastrá para cambiar el orden en que aparecen en la página.
+      Para ocultar uno sin borrarlo, desactivá «Mostrar en la página».
+    folder: /datos/productos
+    format: json
+    extension: json
+    create: true
+    delete: true
+    reorder:
+      key: orden
+    identifier_field: nombre
+    slug: "{{nombre}}"
+    summary: "{{nombre}}"
+    sortable_fields: [nombre, precio, categoria]
+    view_filters:
+      - label: Ocultos
+        field: disponible
+        pattern: false
+    editor:
+      preview: false
+    fields:
+      - name: nombre
+        label: Nombre
+        widget: string
+        maxlength: 80
+        hint: "Como se ve en la página. Ej: Conjunto Ámbar"
+      - name: categoria
+        label: Categoría
+        widget: relation
+        collection: categorias
+        value_field: "{{slug}}"
+        search_fields: [nombre]
+        display_fields: [nombre]
+      - name: precio
+        label: Precio
+        widget: number
+        value_type: int
+        min: 1
+        hint: "Sin puntos ni signo $. Ej: 18900"
+      - name: precioAntes
+        label: Precio anterior
+        widget: number
+        value_type: int
+        min: 1
+        required: false
+        hint: "Opcional. Si está en oferta, poné acá el precio de antes y se ve tachado."
+      - name: fotos
+        label: Fotos
+        widget: image
+        multiple: true
+        required: false
+        # Sin SVG ni GIF: solo fotos (las HEIC del iPhone se convierten a WebP)
+        accept: "image/jpeg,image/png,image/webp,image/heic,image/heif,.jpg,.jpeg,.png,.webp,.heic,.heif"
+        hint: "La primera es la que se ve en el catálogo. Si no subís ninguna, se muestra un dibujo. Se achican solas y se les borra la ubicación."
+      - name: talles
+        label: Talles
+        widget: list
+        required: false
+        hint: "Uno por renglón (Enter agrega otro). Ej: S, M, L o 85, 90, 95"
+      - name: colores
+        label: Colores
+        widget: list
+        required: false
+        hint: "Uno por renglón. Si el nombre es un color conocido (rosa, negro, nude, lila…) se muestra la muestrita de color."
+      - name: descripcion
+        label: Descripción
+        widget: text
+        required: false
+        maxlength: 400
+        hint: "Tela, detalles, cómo calza."
+      - name: etiqueta
+        label: Etiqueta
+        widget: string
+        required: false
+        maxlength: 20
+        hint: "Opcional. Ej: Nuevo, Oferta, Últimos. Si dice «Oferta», se ve en fucsia."
+      - name: disponible
+        label: Mostrar en la página
+        widget: boolean
+        default: true
+        hint: "Desactivalo si no hay stock: el producto queda guardado pero no se ve."
+
+  # ------------------------------------------------------------------------
+  - name: categorias
+    label: Categorías
+    label_singular: Categoría
+    icon: category
+    description: Arrastrá para cambiar el orden de los botones de categorías.
+    folder: /datos/categorias
+    format: json
+    extension: json
+    create: true
+    delete: true
+    reorder:
+      key: orden
+    identifier_field: nombre
+    slug: "{{nombre}}"
+    summary: "{{nombre}}"
+    editor:
+      preview: false
+    fields:
+      - name: nombre
+        label: Nombre
+        widget: string
+        maxlength: 40
+        hint: "Ej: Conjuntos sin aro"
+      - name: corto
+        label: Nombre corto
+        widget: string
+        maxlength: 20
+        hint: "Para el círculo de arriba (como los destacados de Instagram). Ej: Sin aro"
+      - name: dibujo
+        label: Dibujo
+        widget: select
+        hint: "El dibujo del círculo y de los productos que no tienen foto."
+        options:
+          - { label: "Corpiño con aro", value: con-aro }
+          - { label: "Bralette sin aro", value: sin-aro }
+          - { label: "Pijama", value: pijama }
+
+  # ------------------------------------------------------------------------
+  - name: ajustes
+    label: Datos de la tienda
+    icon: storefront
+    editor:
+      preview: false
+    files:
+      - name: tienda
+        label: Contacto, pagos y entregas
+        file: /datos/tienda.json
+        format: json
+        fields:
+          - name: nombre
+            label: Nombre de la tienda
+            widget: string
+            maxlength: 40
+          - name: whatsapp
+            label: Número de WhatsApp
+            widget: string
+            pattern: ['^549\d{8,12}$', 'Formato: 549 + código de área sin 0 + número sin 15. Ej: 5491112345678']
+            hint: "Recibe los pedidos. 549 + código de área sin 0 + número sin 15. Ej: 11 1234-5678 → 5491112345678"
+          - name: instagram
+            label: Usuario de Instagram
+            widget: string
+            pattern: ['^[A-Za-z0-9._]{1,30}$', 'Solo el usuario, sin @ ni link. Ej: bel.intimma']
+          - name: tiktok
+            label: Usuario de TikTok
+            widget: string
+            pattern: ['^[A-Za-z0-9._]{1,30}$', 'Solo el usuario, sin @ ni link. Ej: bel.intimma']
+          - name: zona
+            label: Zona
+            widget: string
+            maxlength: 80
+            hint: "Se ve al pie de la página. Ej: Gral. San Martín, Buenos Aires"
+          - name: heroTitulo
+            label: Título principal
+            widget: string
+            maxlength: 90
+            hint: "La frase grande de arriba de todo."
+          - name: heroBajada
+            label: Texto debajo del título
+            widget: text
+            maxlength: 240
+          - name: avisos
+            label: Avisos de la franja de arriba
+            widget: list
+            max: 6
+            required: false
+            hint: "Van rotando. Uno por renglón, cortitos."
+          - name: descuentoTransferencia
+            label: Descuento por transferencia o efectivo (%)
+            widget: number
+            value_type: int
+            min: 0
+            max: 90
+            default: 0
+            hint: "Poné 0 para no mostrar descuento."
+          - name: mediosDePago
+            label: Medios de pago
+            widget: list
+            max: 10
+            hint: "Aparecen en la página y en el pedido. Uno por renglón."
+          - name: entregas
+            label: Formas de entrega
+            label_singular: Forma de entrega
+            widget: list
+            min: 1
+            max: 5
+            summary: "{{nombre}}"
+            fields:
+              - name: nombre
+                label: Nombre
+                widget: string
+                maxlength: 60
+                hint: "Ej: Retiro en Gral. San Martín"
+              - name: detalle
+                label: Detalle
+                widget: string
+                required: false
+                maxlength: 120
+                hint: "Ej: Sin cargo. Coordinamos día y horario."
+              - name: pideDireccion
+                label: Pedir localidad o barrio a la clienta
+                widget: boolean
+                default: false
+
+      - name: talles
+        label: Guía de talles
+        file: /datos/talles.json
+        format: json
+        fields:
+          - name: nota
+            label: Texto de ayuda
+            widget: text
+            required: false
+            maxlength: 300
+          - name: tablas
+            label: Tablas
+            label_singular: Tabla
+            widget: list
+            max: 6
+            summary: "{{titulo}}"
+            fields:
+              - name: titulo
+                label: Título de la tabla
+                widget: string
+                maxlength: 60
+                hint: "Ej: Corpiños con aro"
+              - name: columnas
+                label: Columnas
+                widget: list
+                max: 6
+                hint: "Los títulos de las columnas, SIN contar «Talle» (va siempre primero). Ej: Busto, Cintura, Cadera"
+              - name: filas
+                label: Talles
+                label_singular: Talle
+                widget: list
+                max: 20
+                summary: "{{talle}}"
+                fields:
+                  - name: talle
+                    label: Talle
+                    widget: string
+                    maxlength: 12
+                  - name: medidas
+                    label: Medidas
+                    widget: list
+                    max: 6
+                    hint: "Una por columna y en el mismo orden. Ej: 82–88 cm"
+
+      - name: preguntas
+        label: Preguntas frecuentes
+        file: /datos/preguntas.json
+        format: json
+        fields:
+          - name: preguntas
+            label: Preguntas
+            label_singular: Pregunta
+            widget: list
+            max: 20
+            summary: "{{pregunta}}"
+            fields:
+              - name: pregunta
+                label: Pregunta
+                widget: string
+                maxlength: 120
+              - name: respuesta
+                label: Respuesta
+                widget: text
+                maxlength: 600

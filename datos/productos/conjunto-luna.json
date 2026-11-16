@@ -1,0 +1,19 @@
+{
+  "nombre": "Conjunto Luna",
+  "categoria": "sin-aro",
+  "precio": 18400,
+  "fotos": [],
+  "talles": [
+    "S",
+    "M",
+    "L"
+  ],
+  "colores": [
+    "Negro",
+    "Bordó"
+  ],
+  "descripcion": "Encaje elastizado con espalda cruzada y bombacha cola less. Delicado y con buena sujeción sin aro.",
+  "etiqueta": "",
+  "disponible": true,
+  "orden": 4
+}

@@ -1,0 +1,19 @@
+{
+  "nombre": "Conjunto Margarita",
+  "categoria": "sin-aro",
+  "precio": 15500,
+  "fotos": [],
+  "talles": [
+    "S",
+    "M",
+    "L"
+  ],
+  "colores": [
+    "Lila",
+    "Celeste"
+  ],
+  "descripcion": "Bralette de algodón con lycra y bombacha vedetina. Suave, liviano y sin costuras que marquen.",
+  "etiqueta": "",
+  "disponible": true,
+  "orden": 2
+}

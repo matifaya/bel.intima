@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <!-- Seguridad. En Netlify las mismas reglas (y más) llegan como headers desde el archivo _headers.
-       Esta copia en <meta> es para GitHub Pages, que no permite configurar headers. -->
+       Esta copia en <meta> es una segunda capa (y la que se aplica al probar con un servidor local). -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>Bel Intimma · Ropa interior y pijamas en Gral. San Martín</title>
@@ -124,39 +124,8 @@
     <div class="info contenedor">
       <section id="talles" class="info__bloque" aria-labelledby="talles-titulo">
         <h2 id="talles-titulo" class="titulo-seccion">Guía de talles</h2>
-        <p class="info__nota">Medí el contorno con un centímetro, sin ajustar. Si quedás entre dos talles, elegí el más grande o escribinos y te ayudamos.</p>
-
-        <div class="tabla-envoltura" tabindex="0" role="region" aria-label="Tabla de talles de conjuntos sin aro y pijamas">
-          <table class="tabla">
-            <caption>Conjuntos sin aro y pijamas</caption>
-            <thead>
-              <tr><th scope="col">Talle</th><th scope="col">Busto</th><th scope="col">Cintura</th><th scope="col">Cadera</th></tr>
-            </thead>
-            <tbody>
-              <tr><th scope="row">S</th><td>82–88&nbsp;cm</td><td>62–68&nbsp;cm</td><td>88–94&nbsp;cm</td></tr>
-              <tr><th scope="row">M</th><td>88–94&nbsp;cm</td><td>68–74&nbsp;cm</td><td>94–100&nbsp;cm</td></tr>
-              <tr><th scope="row">L</th><td>94–100&nbsp;cm</td><td>74–80&nbsp;cm</td><td>100–106&nbsp;cm</td></tr>
-              <tr><th scope="row">XL</th><td>100–106&nbsp;cm</td><td>80–86&nbsp;cm</td><td>106–112&nbsp;cm</td></tr>
-              <tr><th scope="row">XXL</th><td>106–112&nbsp;cm</td><td>86–92&nbsp;cm</td><td>112–118&nbsp;cm</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="tabla-envoltura" tabindex="0" role="region" aria-label="Tabla de talles de corpiños con aro">
-          <table class="tabla">
-            <caption>Corpiños con aro</caption>
-            <thead>
-              <tr><th scope="col">Talle</th><th scope="col">Contorno bajo busto</th><th scope="col">Equivale a</th></tr>
-            </thead>
-            <tbody>
-              <tr><th scope="row">85</th><td>68–72&nbsp;cm</td><td>S</td></tr>
-              <tr><th scope="row">90</th><td>73–77&nbsp;cm</td><td>M</td></tr>
-              <tr><th scope="row">95</th><td>78–82&nbsp;cm</td><td>L</td></tr>
-              <tr><th scope="row">100</th><td>83–87&nbsp;cm</td><td>XL</td></tr>
-              <tr><th scope="row">105</th><td>88–92&nbsp;cm</td><td>XXL</td></tr>
-            </tbody>
-          </table>
-        </div>
+        <p class="info__nota" data-talles-nota hidden></p>
+        <div data-tablas-talles></div>
       </section>
 
       <section id="pagos" class="info__bloque info__bloque--tarjeta" aria-labelledby="pagos-titulo">
@@ -167,16 +136,7 @@
         <p class="info__nota" data-nota-descuento hidden></p>
 
         <h3 class="info__sub">Entregas</h3>
-        <ul class="entregas">
-          <li>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
-            <div><strong>Retiro sin cargo</strong><span>Coordinamos día y horario en Gral. San Martín.</span></div>
-          </li>
-          <li>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.5"/><circle cx="17" cy="17.5" r="1.5"/></svg>
-            <div><strong>Envíos</strong><span>A domicilio o por correo. Te pasamos el costo según tu zona.</span></div>
-          </li>
-        </ul>
+        <ul class="entregas" data-entregas></ul>
       </section>
     </div>
 
@@ -184,28 +144,7 @@
     <section id="preguntas" class="preguntas contenedor" aria-labelledby="preguntas-titulo">
       <h2 id="preguntas-titulo" class="titulo-seccion">Preguntas frecuentes</h2>
 
-      <div class="acordeon">
-        <details>
-          <summary>¿Cómo sé si hay stock de mi talle?</summary>
-          <p>Cuando nos mandás el pedido por WhatsApp te confirmamos el stock antes de que pagues. Si algo no está, te ofrecemos otro color o talle parecido.</p>
-        </details>
-        <details>
-          <summary>¿Puedo cambiar una prenda?</summary>
-          <p>Sí, coordinamos cambios de talle por WhatsApp. Por higiene, la prenda tiene que estar sin uso y con su etiqueta.</p>
-        </details>
-        <details>
-          <summary>¿Hacen envíos fuera de San Martín?</summary>
-          <p>Sí. Enviamos a domicilio o por correo y te pasamos el costo según tu zona antes de cerrar el pedido.</p>
-        </details>
-        <details>
-          <summary>¿Tengo que pagar para enviar el pedido?</summary>
-          <p>No. Mandar el pedido no te compromete a nada: es para que veamos juntas el stock y la entrega. Pagás recién cuando confirmamos todo.</p>
-        </details>
-        <details>
-          <summary>No sé mi talle, ¿me ayudan?</summary>
-          <p>Claro. Mirá la <a href="#talles">guía de talles</a> o escribinos tus medidas por WhatsApp y te recomendamos el que mejor te queda.</p>
-        </details>
-      </div>
+      <div class="acordeon" data-preguntas></div>
     </section>
 
     <!-- Redes -->
@@ -356,8 +295,8 @@
     </div>
   </dialog>
 
-  <script src="js/config.js"></script>
-  <script src="js/productos.js"></script>
+  <!-- Datos de la tienda y catálogo: los genera scripts/preparar_publicacion.py desde datos/ (el panel) -->
+  <script src="js/datos.js"></script>
   <script src="js/dibujos.js"></script>
   <script src="js/app.js"></script>
   <script src="js/seda.js" defer></script>

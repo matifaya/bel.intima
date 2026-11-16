@@ -1,0 +1,99 @@
+{
+  "nota": "Medí el contorno con un centímetro, sin ajustar. Si quedás entre dos talles, elegí el más grande o escribinos y te ayudamos.",
+  "tablas": [
+    {
+      "titulo": "Conjuntos sin aro y pijamas",
+      "columnas": [
+        "Busto",
+        "Cintura",
+        "Cadera"
+      ],
+      "filas": [
+        {
+          "talle": "S",
+          "medidas": [
+            "82–88 cm",
+            "62–68 cm",
+            "88–94 cm"
+          ]
+        },
+        {
+          "talle": "M",
+          "medidas": [
+            "88–94 cm",
+            "68–74 cm",
+            "94–100 cm"
+          ]
+        },
+        {
+          "talle": "L",
+          "medidas": [
+            "94–100 cm",
+            "74–80 cm",
+            "100–106 cm"
+          ]
+        },
+        {
+          "talle": "XL",
+          "medidas": [
+            "100–106 cm",
+            "80–86 cm",
+            "106–112 cm"
+          ]
+        },
+        {
+          "talle": "XXL",
+          "medidas": [
+            "106–112 cm",
+            "86–92 cm",
+            "112–118 cm"
+          ]
+        }
+      ]
+    },
+    {
+      "titulo": "Corpiños con aro",
+      "columnas": [
+        "Contorno bajo busto",
+        "Equivale a"
+      ],
+      "filas": [
+        {
+          "talle": "85",
+          "medidas": [
+            "68–72 cm",
+            "S"
+          ]
+        },
+        {
+          "talle": "90",
+          "medidas": [
+            "73–77 cm",
+            "M"
+          ]
+        },
+        {
+          "talle": "95",
+          "medidas": [
+            "78–82 cm",
+            "L"
+          ]
+        },
+        {
+          "talle": "100",
+          "medidas": [
+            "83–87 cm",
+            "XL"
+          ]
+        },
+        {
+          "talle": "105",
+          "medidas": [
+            "88–92 cm",
+            "XXL"
+          ]
+        }
+      ]
+    }
+  ]
+}

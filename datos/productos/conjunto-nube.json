@@ -1,0 +1,19 @@
+{
+  "nombre": "Conjunto Nube",
+  "categoria": "sin-aro",
+  "precio": 17800,
+  "precioAntes": 19900,
+  "fotos": [],
+  "talles": [
+    "M",
+    "L",
+    "XL"
+  ],
+  "colores": [
+    "Rosa bebé"
+  ],
+  "descripcion": "Top de microfibra con taza soft removible y bombacha tiro alto. El más cómodo para dormir o estar en casa.",
+  "etiqueta": "Oferta",
+  "disponible": true,
+  "orden": 3
+}

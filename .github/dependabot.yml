@@ -1,0 +1,14 @@
+# Avisa con un pull request cuando hay versión nueva del panel (Sveltia CMS) o de Vite.
+# Netlify arma una vista previa de cada pull request: revisá que el panel abra bien y hacé merge.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /panel
+    schedule:
+      interval: weekly
+    groups:
+      panel:
+        patterns: ["*"]
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "Panel"

@@ -1,0 +1,19 @@
+{
+  "nombre": "Pijama Frutilla",
+  "categoria": "pijamas",
+  "precio": 27900,
+  "fotos": [],
+  "talles": [
+    "S",
+    "M",
+    "L",
+    "XL"
+  ],
+  "colores": [
+    "Rosa estampado"
+  ],
+  "descripcion": "Camisa manga corta con ribete y short de modal. Fresco para el verano, suave al tacto.",
+  "etiqueta": "Nuevo",
+  "disponible": true,
+  "orden": 8
+}
