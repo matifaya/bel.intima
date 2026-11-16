@@ -10,6 +10,7 @@ js/config.js        ← Datos de la tienda: WhatsApp, redes, medios de pago
 js/productos.js     ← Catálogo: acá agregás, editás y sacás productos
 js/dibujos.js       Ilustraciones de los productos sin foto
 js/app.js           Funcionamiento (carrito, filtros, WhatsApp)
+js/seda.js          Fondo 3D de seda del inicio (Three.js)
 img/productos/      ← Fotos de los productos
 DESIGN.md           Sistema de diseño (colores, tipografías y criterios)
 ```
@@ -125,4 +126,5 @@ python3 -m http.server 8000
 - Envío del pedido por WhatsApp con el detalle de prendas, talles, colores, total, nombre, entrega y forma de pago.
 - Barra fija con el total en el celular, opción para deshacer al quitar una prenda, y validación de nombre, talle y color.
 - Guía de talles, pagos y entregas, preguntas frecuentes y links a Instagram y TikTok.
+- Fondo 3D de papel de seda que reacciona al cursor/dedo y al scroll, y tarjetas con inclinación 3D.
 - Accesible: navegación con teclado, foco visible, contrastes AA y respeto por "reducir movimiento".

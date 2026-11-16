@@ -294,16 +294,39 @@ svg[viewBox="0 0 24 24"] {
    Hero
    -------------------------------------------------------------------------- */
 .hero {
+  position: relative;
+  isolation: isolate;
   background: var(--rosa-velo);
   padding-block: var(--e-5) var(--e-6);
   overflow: hidden;
+}
+.seda {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: pan-y;
 }
 .hero__grilla {
   display: grid;
   gap: var(--e-5);
   align-items: center;
 }
-.hero__texto { max-width: 34rem; }
+.hero__texto { position: relative; max-width: 34rem; }
+/* Sobre la seda, un halo de luz suave garantiza el contraste del texto */
+.con-seda .hero__texto::before {
+  content: "";
+  position: absolute;
+  inset: -12% -18%;
+  z-index: -1;
+  background: radial-gradient(closest-side, rgb(255 243 248 / 0.72), rgb(255 243 248 / 0.4) 60%, transparent);
+  pointer-events: none;
+}
+.con-seda .hero__bajada { color: var(--ciruela); }
+.con-seda .hero .btn--suave, .con-seda .btn--suave { background: rgb(255 255 255 / 0.4); }
+.con-seda .btn--suave:hover { background: var(--ciruela); }
 .hero__titulo {
   font-family: var(--f-display);
   font-weight: 400;
@@ -335,7 +358,15 @@ svg[viewBox="0 0 24 24"] {
   aspect-ratio: 1;
   border-radius: 50%;
   background: var(--rosa-bel);
-  box-shadow: 0 0 0 8px var(--rosa-velo), 0 0 0 9.5px var(--encaje);
+  box-shadow: 0 0 0 8px rgb(255 255 255 / 0.45), 0 0 0 9.5px var(--encaje);
+  transition: box-shadow 1.2s var(--ease-suave);
+}
+/* Sobre la seda, el avatar es el sticker que cierra el paquete */
+.con-seda .avatar__circulo {
+  box-shadow:
+    0 0 0 8px rgb(255 255 255 / 0.5),
+    0 0 0 9.5px var(--encaje),
+    0 28px 60px -24px rgb(74 42 58 / 0.45);
 }
 .avatar__circulo .dibujo { position: absolute; inset: 0; width: 100%; height: 100%; }
 
@@ -568,6 +599,32 @@ svg[viewBox="0 0 24 24"] {
   .tarjeta:hover .tarjeta__media img:first-of-type,
   .tarjeta:hover .tarjeta__media .dibujo { transform: scale(1.04); }
   .tarjeta:hover .tarjeta__media .foto-2 { opacity: 1; }
+
+  /* Inclinación 3D con brillo de satén que sigue al mouse */
+  .tarjeta { perspective: 900px; }
+  .tarjeta__media {
+    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transform-style: preserve-3d;
+    transition: transform 700ms var(--ease-salida), box-shadow 700ms var(--ease-salida);
+  }
+  .tarjeta.inclinada .tarjeta__media {
+    transition: transform 120ms linear, box-shadow 400ms var(--ease-salida);
+    box-shadow: 0 30px 50px -30px rgb(74 42 58 / 0.4);
+  }
+  .tarjeta__media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      radial-gradient(120% 80% at var(--gx, 50%) var(--gy, 0%), rgb(255 255 255 / 0.55), transparent 55%),
+      linear-gradient(115deg, transparent 35%, rgb(255 255 255 / 0.18) 50%, transparent 65%);
+    mix-blend-mode: soft-light;
+    opacity: 0;
+    transition: opacity 500ms var(--ease-suave);
+  }
+  .tarjeta.inclinada .tarjeta__media::after { opacity: 1; }
 }
 
 /* --------------------------------------------------------------------------
@@ -1092,7 +1149,13 @@ svg[viewBox="0 0 24 24"] {
 
   .hero { padding-block: var(--e-8); }
   .hero__grilla { grid-template-columns: 1.1fr 0.9fr; gap: var(--e-7); }
-  .avatar__circulo { box-shadow: 0 0 0 12px var(--rosa-velo), 0 0 0 14px var(--encaje); }
+  .avatar__circulo { box-shadow: 0 0 0 12px rgb(255 255 255 / 0.45), 0 0 0 14px var(--encaje); }
+  .con-seda .avatar__circulo {
+    box-shadow:
+      0 0 0 12px rgb(255 255 255 / 0.5),
+      0 0 0 14px var(--encaje),
+      0 40px 80px -30px rgb(74 42 58 / 0.45);
+  }
 
   .grilla { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .destacado { width: 104px; font-size: var(--t-s); }

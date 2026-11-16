@@ -622,6 +622,42 @@
     $("[data-tostada]").classList.remove("visible");
   });
 
+  /* ---------- inclinación 3D de las tarjetas (solo mouse) ---------- */
+
+  function iniciarInclinacion() {
+    if (movimientoReducido || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    const grilla = $("[data-grilla]");
+    let actual = null;
+    let pendiente = null;
+
+    const soltar = (t) => {
+      t.classList.remove("inclinada");
+      t.style.removeProperty("--rx");
+      t.style.removeProperty("--ry");
+    };
+
+    grilla.addEventListener("pointermove", (e) => {
+      const t = e.target.closest(".tarjeta");
+      if (actual && actual !== t) soltar(actual);
+      actual = t;
+      if (!t) return;
+      pendiente = e;
+      requestAnimationFrame(() => {
+        if (!pendiente || !actual) return;
+        const r = $(".tarjeta__media", actual).getBoundingClientRect();
+        const x = Math.min(1, Math.max(0, (pendiente.clientX - r.left) / r.width));
+        const y = Math.min(1, Math.max(0, (pendiente.clientY - r.top) / r.height));
+        actual.classList.add("inclinada");
+        actual.style.setProperty("--ry", `${(x - 0.5) * 9}deg`);
+        actual.style.setProperty("--rx", `${(0.5 - y) * 7}deg`);
+        actual.style.setProperty("--gx", `${x * 100}%`);
+        actual.style.setProperty("--gy", `${y * 100}%`);
+        pendiente = null;
+      });
+    });
+    grilla.addEventListener("pointerleave", () => { if (actual) soltar(actual); actual = null; });
+  }
+
   /* ---------- cabecera ---------- */
 
   function iniciarCabecera() {
@@ -644,6 +680,7 @@
   iniciarPedido();
   renderPedido();
   iniciarCabecera();
+  iniciarInclinacion();
   iniciarRutas();
 
   if (!whatsappConfigurado()) {

@@ -64,8 +64,19 @@ celular                         escritorio
 └──────────────────┘            └──────────────────────────────────────┘
 ```
 
+## 3D: papel de seda
+- **El hero es una tela de satén en WebGL (Three.js, `js/seda.js`).** Pliegues largos en diagonal,
+  brillo de satén (especular ancho + fino) y Fresnel en los bordes de cada pliegue.
+  Se abulta bajo el cursor o el dedo y se agita y "levanta" al hacer scroll: es el papel de seda
+  del regalo que se abre. El avatar queda encima como el sticker que cierra el paquete.
+- Carga diferida (después de `load`, en tiempo ocioso), se pausa fuera de pantalla, densidad de píxeles
+  limitada en el celular, y si no hay WebGL o CDN queda el fondo rosa liso.
+- Un halo claro detrás del texto del hero garantiza el contraste sobre los pliegues oscuros.
+- **Tarjetas de producto:** inclinación 3D (máx. ~9°) con un brillo satinado que sigue al mouse.
+  Solo con mouse; en el celular no hay inclinación.
+
 ## Movimiento
-- **Un solo momento orquestado:** el dibujo del avatar se traza al cargar (≈1.6 s).
+- **Un solo momento orquestado:** al cargar, la seda aparece y el dibujo del avatar se traza (≈1.6 s).
 - El resto responde a acciones: el panel del pedido se desliza, el contador de la
   bolsita late al sumar, la ficha del producto sube como hoja en el celular.
 - `prefers-reduced-motion` anula todo lo anterior.
