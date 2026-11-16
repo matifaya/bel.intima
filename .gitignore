@@ -1,0 +1,43 @@
+# ----------------------------------------------------------------------------
+# Archivos que NO se suben al repositorio
+# ----------------------------------------------------------------------------
+
+# Carpeta que arma scripts/preparar_publicacion.py (se genera cada vez)
+publicar/
+
+# Capturas, originales y archivos personales que no son parte del sitio
+logo.webp
+capturas/
+img/originales/
+*.psd
+*.ai
+*.xcf
+*.heic
+*.HEIC
+
+# Claves, contraseñas y variables de entorno: nunca van al repo
+.env
+.env.*
+*.pem
+*.key
+*.p12
+secrets.*
+credenciales.*
+
+# Netlify CLI (guarda el id del sitio y tokens locales)
+.netlify/
+
+# Herramientas
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+
+# Sistema operativo y editores
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*~

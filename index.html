@@ -3,6 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- Seguridad. En Netlify las mismas reglas (y más) llegan como headers desde el archivo _headers.
+       Esta copia en <meta> es para GitHub Pages, que no permite configurar headers. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>Bel Intimma · Ropa interior y pijamas en Gral. San Martín</title>
   <meta name="description" content="Conjuntos con y sin aro y pijamas. Elegí tus prendas, armá tu pedido y mandalo por WhatsApp. Retiro en Gral. San Martín y envíos.">
   <meta name="theme-color" content="#4A2A3A">
@@ -14,10 +18,10 @@
 
   <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..600;1,6..96,400..500&family=Jost:wght@400;500;600&display=swap">
+  <!-- Fuentes alojadas en el sitio: ningún pedido a servidores de terceros -->
+  <link rel="preload" href="fonts/bodoni-moda.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/jost.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/fuentes.css">
 
   <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -214,11 +218,11 @@
             <p>Ingresos, reposiciones y combinaciones las mostramos en Instagram y TikTok.</p>
           </div>
           <div class="redes__botones">
-            <a class="btn btn--principal" data-link="instagram" href="https://www.instagram.com/bel.intimma/" target="_blank" rel="noopener">
+            <a class="btn btn--principal" data-link="instagram" href="https://www.instagram.com/bel.intimma/" target="_blank" rel="noopener noreferrer">
               <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".6" fill="currentColor"/></svg>
               Seguinos en Instagram
             </a>
-            <a class="btn btn--contorno" data-link="tiktok" href="https://www.tiktok.com/@bel.intimma" target="_blank" rel="noopener">
+            <a class="btn btn--contorno" data-link="tiktok" href="https://www.tiktok.com/@bel.intimma" target="_blank" rel="noopener noreferrer">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5"/><path d="M14 3c.4 2.6 2.2 4.4 5 4.6"/></svg>
               Ver en TikTok
             </a>
@@ -233,9 +237,9 @@
       <p class="logotipo logotipo--pie" translate="no">bel.intimma</p>
       <p class="pie__dato">Ropa interior y pijamas desde <span data-zona>Gral. San Martín, Buenos Aires</span>.</p>
       <ul class="pie__links">
-        <li><a data-link="whatsapp" href="#" target="_blank" rel="noopener">WhatsApp</a></li>
-        <li><a data-link="instagram" href="https://www.instagram.com/bel.intimma/" target="_blank" rel="noopener">Instagram</a></li>
-        <li><a data-link="tiktok" href="https://www.tiktok.com/@bel.intimma" target="_blank" rel="noopener">TikTok</a></li>
+        <li><a data-link="whatsapp" href="#" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
+        <li><a data-link="instagram" href="https://www.instagram.com/bel.intimma/" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+        <li><a data-link="tiktok" href="https://www.tiktok.com/@bel.intimma" target="_blank" rel="noopener noreferrer">TikTok</a></li>
       </ul>
       <p class="pie__chico">© <span data-anio>2026</span> Bel Intimma</p>
     </div>
@@ -288,7 +292,7 @@
         <form class="pedido__form" data-form-pedido novalidate>
           <div class="campo">
             <label for="p-nombre">Tu nombre</label>
-            <input id="p-nombre" name="nombre" type="text" autocomplete="given-name" placeholder="Ej: Sofía…" required>
+            <input id="p-nombre" name="nombre" type="text" autocomplete="given-name" placeholder="Ej: Sofía…" maxlength="60" spellcheck="false" required>
             <p class="campo__error" id="p-nombre-error" hidden>Escribí tu nombre así sabemos quién hace el pedido.</p>
           </div>
 
@@ -299,7 +303,7 @@
 
           <div class="campo" data-campo-direccion hidden>
             <label for="p-zona">Localidad o barrio</label>
-            <input id="p-zona" name="zona" type="text" autocomplete="address-level2" placeholder="Ej: Villa Ballester…">
+            <input id="p-zona" name="zona" type="text" autocomplete="address-level2" placeholder="Ej: Villa Ballester…" maxlength="80">
           </div>
 
           <div class="campo">
@@ -348,7 +352,7 @@
           <li><a href="#preguntas">Preguntas frecuentes</a></li>
         </ul>
       </nav>
-      <a class="btn btn--contorno btn--ancho" data-link="whatsapp" href="#" target="_blank" rel="noopener">Escribinos por WhatsApp</a>
+      <a class="btn btn--contorno btn--ancho" data-link="whatsapp" href="#" target="_blank" rel="noopener noreferrer">Escribinos por WhatsApp</a>
     </div>
   </dialog>
 

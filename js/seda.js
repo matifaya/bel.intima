@@ -14,7 +14,10 @@
 (function () {
   "use strict";
 
-  const THREE_URL = "https://cdn.jsdelivr.net/npm/three@0.187.0/build/three.module.min.js";
+  // Three.js alojado en el propio sitio (ver el encabezado del archivo para su origen).
+  // Se resuelve contra la página, así funciona también si el sitio vive en una subcarpeta
+  // (por ejemplo usuario.github.io/bel.intima/).
+  const THREE_URL = new URL("js/vendor/three-seda.min.js", document.baseURI).href;
 
   const hero = document.querySelector("[data-seda]");
   if (!hero) return;
@@ -186,7 +189,7 @@
     try {
       THREE = await import(THREE_URL);
     } catch {
-      return; // sin conexión al CDN: queda el fondo liso
+      return; // no se pudo cargar (por ejemplo, abriendo el archivo con doble clic): queda el fondo liso
     }
 
     const canvas = document.createElement("canvas");

@@ -4,15 +4,21 @@ Catálogo de ropa interior y pijamas con pedido por WhatsApp.
 Es una página estática (HTML, CSS y JavaScript, sin instalar nada): se puede subir gratis a Netlify o GitHub Pages.
 
 ```
-index.html          La página
-css/styles.css      Estilos (colores, tipografías, diseño)
-js/config.js        ← Datos de la tienda: WhatsApp, redes, medios de pago
-js/productos.js     ← Catálogo: acá agregás, editás y sacás productos
-js/dibujos.js       Ilustraciones de los productos sin foto
-js/app.js           Funcionamiento (carrito, filtros, WhatsApp)
-js/seda.js          Fondo 3D de seda del inicio (Three.js)
-img/productos/      ← Fotos de los productos
-DESIGN.md           Sistema de diseño (colores, tipografías y criterios)
+index.html                      La página
+css/styles.css                  Estilos (colores, tipografías, diseño)
+css/fuentes.css                 Tipografías (alojadas en el sitio, carpeta fonts/)
+js/config.js                    ← Datos de la tienda: WhatsApp, redes, medios de pago
+js/productos.js                 ← Catálogo: acá agregás, editás y sacás productos
+js/dibujos.js                   Ilustraciones de los productos sin foto
+js/app.js                       Funcionamiento (carrito, filtros, WhatsApp, validaciones)
+js/seda.js                      Fondo 3D de seda del inicio
+js/vendor/three-seda.min.js     Three.js (alojado en el sitio)
+img/productos/                  ← Fotos de los productos
+scripts/limpiar_fotos.py        ← Borra EXIF/GPS de las fotos
+scripts/preparar_publicacion.py ← Arma la carpeta publicar/ para Netlify
+_headers, netlify.toml          Seguridad y configuración de Netlify
+SECURITY.md                     Seguridad: qué está protegido y checklist de cuentas
+DESIGN.md                       Sistema de diseño (colores, tipografías y criterios)
 ```
 
 ---
@@ -36,10 +42,14 @@ Las medidas de la tabla son orientativas: ajustalas a las de tus prendas.
 ## 2. Cómo agregar un producto
 
 1. Guardá las fotos en `img/productos/`. Recomendado: verticales (4:5, por ejemplo 1200 × 1500 px),
-   en `.jpg` o `.webp`, de menos de 300 KB cada una. Usá nombres sin espacios ni tildes:
-   `conjunto-lila-1.jpg`, `conjunto-lila-2.jpg`.
-2. Abrí `js/productos.js`, copiá un bloque completo (desde `{` hasta `},`) y pegalo debajo.
-3. Cambiá los datos:
+   en `.jpg` o `.webp`. Usá nombres sin espacios ni tildes: `conjunto-lila-1.jpg`, `conjunto-lila-2.jpg`.
+2. **Limpiá las fotos** (borra la ubicación GPS y los datos del celular, y las achica para la web):
+   ```bash
+   python3 scripts/limpiar_fotos.py
+   ```
+   La primera vez instalá Pillow con `pip install pillow`. Más detalles en `SECURITY.md`.
+3. Abrí `js/productos.js`, copiá un bloque completo (desde `{` hasta `},`) y pegalo debajo.
+4. Cambiá los datos:
 
 ```js
 {
@@ -57,7 +67,7 @@ Las medidas de la tabla son orientativas: ajustalas a las de tus prendas.
 },
 ```
 
-4. Guardá y recargá la página.
+5. Guardá y recargá la página.
 
 **Atajos útiles**
 
@@ -71,6 +81,9 @@ Las medidas de la tabla son orientativas: ajustalas a las de tus prendas.
 
 > Si después de editar la página aparece en blanco, casi siempre falta una coma `,` entre productos o
 > una comilla `"` sin cerrar. Abrí la consola del navegador (F12) y te dice la línea.
+>
+> Si un producto no aparece, mirá la consola: la página revisa cada producto y avisa qué dato está mal
+> (id con espacios, precio con puntos, categoría que no existe, foto fuera de `img/`, etc.).
 
 ---
 
@@ -87,34 +100,48 @@ Ideal para el sticker de link en las historias: la clienta cae directo en la pre
 
 ## 4. Cómo publicarla
 
-### Opción A: Netlify Drop (la más fácil, sin cuentas técnicas)
+**Recomendado: Netlify.** Es el único de los dos que aplica todos los headers de seguridad
+(ver `SECURITY.md`).
 
-1. Entrá a <https://app.netlify.com/drop> y creá una cuenta gratis.
-2. Arrastrá **la carpeta completa del proyecto** a la página.
-3. En segundos te da un link (`algo-random.netlify.app`). En *Site configuration → Change site name*
-   lo podés cambiar, por ejemplo, a `belintimma.netlify.app`.
-4. **Para actualizar** (nuevos productos o precios): entrá al sitio en Netlify → pestaña *Deploys* →
-   arrastrá de nuevo la carpeta.
+### Opción A: Netlify conectado a GitHub (la mejor: se actualiza sola)
 
-### Opción B: GitHub Pages (si ya usás GitHub)
+1. En <https://app.netlify.com> → *Add new site → Import an existing project → GitHub* → elegí `bel.intima`.
+2. Netlify lee `netlify.toml` solo: no cambies nada y tocá *Deploy*.
+3. En *Site configuration → Change site name* poné, por ejemplo, `belintimma`.
+4. **Para actualizar:** hacé commit y push; Netlify publica en un minuto.
+   Si alguna foto tiene metadatos, la publicación se frena y te avisa cuál limpiar.
+
+### Opción B: Netlify Drop (sin conectar GitHub)
+
+1. Ejecutá `python3 scripts/preparar_publicacion.py`. Arma la carpeta **`publicar/`** solo con los
+   archivos de la página (y revisa las fotos).
+2. Entrá a <https://app.netlify.com/drop> y arrastrá **la carpeta `publicar/`**.
+   No arrastres la carpeta del proyecto entera: incluiría el historial de git, notas y archivos personales.
+3. **Para actualizar:** volvé a ejecutar el script y arrastrá `publicar/` en *Deploys*.
+
+### Opción C: GitHub Pages
 
 1. Subí este repositorio a GitHub (`git push`).
 2. En el repositorio: *Settings → Pages → Build and deployment → Source: Deploy from a branch*,
    elegí la rama `main` y la carpeta `/ (root)`. Guardá.
 3. En uno o dos minutos queda en `https://TU-USUARIO.github.io/NOMBRE-DEL-REPO/`.
-4. **Para actualizar:** hacé commit y push de los cambios; se publica solo.
+4. Marcá **Enforce HTTPS** en esa misma pantalla.
+5. **Para actualizar:** hacé commit y push de los cambios; se publica solo.
 
-> Tip: con Netlify también podés conectar el repositorio de GitHub (*Add new site → Import from Git*) y cada
-> `git push` publica automáticamente.
+> GitHub Pages no permite configurar headers: la protección contra XSS (CSP) funciona igual porque
+> también está en el `<meta>` de `index.html`, pero no hay protección contra que otro sitio muestre
+> el tuyo dentro de un marco (clickjacking). Por eso conviene Netlify.
 
 ### Probarla en tu compu antes de subir
-
-Alcanza con hacer doble clic en `index.html`. Para probarla igual que publicada:
 
 ```bash
 python3 -m http.server 8000
 # y abrí http://localhost:8000
 ```
+
+Con doble clic en `index.html` también abre y el carrito funciona, pero el navegador bloquea las
+fuentes y el fondo 3D cuando la página se abre como archivo: se ve con una tipografía genérica.
+Publicada se ve completa.
 
 ---
 
@@ -127,4 +154,6 @@ python3 -m http.server 8000
 - Barra fija con el total en el celular, opción para deshacer al quitar una prenda, y validación de nombre, talle y color.
 - Guía de talles, pagos y entregas, preguntas frecuentes y links a Instagram y TikTok.
 - Fondo 3D de papel de seda que reacciona al cursor/dedo y al scroll, y tarjetas con inclinación 3D.
+- Segura: sin datos de terceros (fuentes y librerías alojadas en el sitio), validación de todo lo que
+  se muestra, headers de seguridad y fotos sin metadatos. Ver `SECURITY.md`.
 - Accesible: navegación con teclado, foco visible, contrastes AA y respeto por "reducir movimiento".

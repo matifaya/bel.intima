@@ -1,0 +1,9 @@
+# Configuración para cuando el sitio se publica conectando el repositorio de GitHub a Netlify.
+# Netlify ejecuta el script, que arma la carpeta "publicar/" solo con los archivos públicos
+# (sin README, DESIGN.md, scripts ni nada que no forme parte de la página) y verifica
+# que las fotos no tengan metadatos.
+[build]
+  command = "python3 scripts/preparar_publicacion.py"
+  publish = "publicar"
+
+# Los headers de seguridad están en el archivo _headers (se copia a "publicar/").

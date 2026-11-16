@@ -4,6 +4,8 @@
 
 (function () {
   const p = (d, extra = "") => `<path pathLength="1" d="${d}" ${extra}/>`;
+  const escapar = (s) =>
+    String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const punteado = (d) => `<path class="trazo-encaje" d="${d}"/>`;
 
   // Desplaza un grupo dentro del lienzo
@@ -99,7 +101,7 @@
       svg(
         "0 0 300 300",
         grupo(50, 40, conAro) +
-          `<text class="avatar__usuario" x="150" y="186" text-anchor="middle">@${usuario}</text>` +
+          `<text class="avatar__usuario" x="150" y="186" text-anchor="middle">@${escapar(usuario)}</text>` +
           grupo(70, 204, bombacha, 0.8),
         "dibujo--avatar"
       ),

@@ -7,8 +7,93 @@
 (function () {
   "use strict";
 
-  const T = window.TIENDA;
-  const PRODUCTOS = (window.PRODUCTOS || []).filter((p) => p && p.disponible !== false);
+  /* ---------- validación de datos ----------
+     Todo lo que viene de config.js, productos.js, la URL o el localStorage se
+     revisa acá antes de usarse: tipos, largos máximos y formatos permitidos.
+     Un dato que no cumple se descarta (y se avisa en la consola) en lugar de
+     llegar a la página. */
+
+  const avisar = (...m) => console.warn("[Bel Intimma]", ...m);
+
+  // Texto plano: sin caracteres de control, espacios colapsados y con largo máximo
+  const texto = (v, max = 120) =>
+    typeof v === "string" || typeof v === "number"
+      ? String(v).replace(/[\u0000-\u001F\u007F-\u009F\u2028\u2029]/g, " ").replace(/\s+/g, " ").trim().slice(0, max)
+      : "";
+  const listaDeTextos = (v, max = 40, cantidad = 30) =>
+    Array.isArray(v) ? v.map((x) => texto(x, max)).filter(Boolean).slice(0, cantidad) : [];
+  const ID_VALIDO = /^[a-z0-9][a-z0-9-]{0,59}$/;
+  const USUARIO_VALIDO = /^[A-Za-z0-9._]{1,30}$/;
+  const numeroPositivo = (v) => (Number.isFinite(v) && v > 0 && v < 1e9 ? Math.round(v) : null);
+
+  // Fotos: solo archivos propios dentro de img/ (sin "..", sin protocolos como javascript: o data:)
+  const RUTA_FOTO = /^img\/[A-Za-z0-9_\-/]+\.(jpe?g|png|webp|avif)$/i;
+  const fotoValida = (ruta) => typeof ruta === "string" && RUTA_FOTO.test(ruta) && !ruta.includes("..");
+
+  function validarConfig(c) {
+    const cfg = c && typeof c === "object" ? c : {};
+    const categorias = (Array.isArray(cfg.categorias) ? cfg.categorias : [])
+      .filter((x) => x && ID_VALIDO.test(x.id))
+      .map((x) => ({
+        id: x.id,
+        nombre: texto(x.nombre, 40) || x.id,
+        corto: texto(x.corto, 20),
+        dibujo: ["con-aro", "sin-aro", "pijama"].includes(x.dibujo) ? x.dibujo : "sin-aro"
+      }));
+    const entregas = (Array.isArray(cfg.entregas) ? cfg.entregas : [])
+      .filter((x) => x && ID_VALIDO.test(x.id))
+      .map((x) => ({ id: x.id, nombre: texto(x.nombre, 60), pideDireccion: x.pideDireccion === true }));
+    const usuario = (v, campo) => {
+      if (USUARIO_VALIDO.test(String(v || ""))) return String(v);
+      avisar(`El usuario de ${campo} en js/config.js no es válido.`);
+      return "bel.intimma";
+    };
+    const descuento = Number(cfg.descuentoTransferencia);
+    return {
+      nombre: texto(cfg.nombre, 40) || "Bel Intimma",
+      whatsapp: String(cfg.whatsapp || "").replace(/\D/g, "").slice(0, 15),
+      instagram: usuario(cfg.instagram, "Instagram"),
+      tiktok: usuario(cfg.tiktok, "TikTok"),
+      zona: texto(cfg.zona, 80),
+      descuentoTransferencia: Number.isFinite(descuento) && descuento > 0 && descuento < 100 ? Math.round(descuento) : 0,
+      mediosDePago: listaDeTextos(cfg.mediosDePago, 40, 10),
+      entregas: entregas.length ? entregas : [{ id: "retiro", nombre: "Retiro", pideDireccion: false }],
+      avisos: listaDeTextos(cfg.avisos, 90, 6),
+      categorias
+    };
+  }
+
+  function validarProductos(lista, categorias) {
+    if (!Array.isArray(lista)) { avisar("js/productos.js no tiene una lista de productos."); return []; }
+    const vistos = new Set();
+    return lista.flatMap((p, n) => {
+      const pos = `Producto #${n + 1}`;
+      if (!p || typeof p !== "object") { avisar(`${pos}: no es un producto válido.`); return []; }
+      if (p.disponible === false) return [];
+      if (!ID_VALIDO.test(String(p.id))) { avisar(`${pos}: el id "${texto(p.id, 60)}" solo puede tener minúsculas, números y guiones.`); return []; }
+      if (vistos.has(p.id)) { avisar(`${pos}: el id "${p.id}" está repetido.`); return []; }
+      if (!categorias.some((c) => c.id === p.categoria)) { avisar(`${p.id}: la categoría "${texto(p.categoria, 40)}" no existe en js/config.js.`); return []; }
+      const precio = numeroPositivo(p.precio);
+      if (!precio) { avisar(`${p.id}: el precio tiene que ser un número sin puntos ni $.`); return []; }
+      const fotos = Array.isArray(p.fotos) ? p.fotos.filter((f) => fotoValida(f) || (avisar(`${p.id}: se ignoró la foto "${texto(f, 80)}" (tiene que estar en img/ y ser jpg, png, webp o avif).`), false)) : [];
+      vistos.add(p.id);
+      return [{
+        id: p.id,
+        nombre: texto(p.nombre, 80) || p.id,
+        categoria: p.categoria,
+        precio,
+        precioAntes: numeroPositivo(p.precioAntes) > precio ? numeroPositivo(p.precioAntes) : null,
+        talles: listaDeTextos(p.talles, 12, 15),
+        colores: listaDeTextos(p.colores, 30, 12),
+        fotos: fotos.slice(0, 8),
+        descripcion: texto(p.descripcion, 400),
+        etiqueta: texto(p.etiqueta, 20)
+      }];
+    });
+  }
+
+  const T = validarConfig(window.TIENDA);
+  const PRODUCTOS = validarProductos(window.PRODUCTOS, T.categorias);
   const D = window.DIBUJOS;
 
   const $ = (sel, raiz = document) => raiz.querySelector(sel);
@@ -16,6 +101,7 @@
   const movimientoReducido = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const CLAVE_CARRITO = "bel-intimma-pedido";
+  const claveItem = (id, talle, color) => [id, talle, color].join("|");
   const ICONO_MENOS = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12"/></svg>';
   const ICONO_MAS = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12M12 6v12"/></svg>';
 
@@ -37,7 +123,7 @@
     nude: "#E6C3A8", rojo: "#C8233A", champagne: "#EAD6B3", gris: "#B9B2B6", verde: "#9CC9A8",
     amarillo: "#F3DE8A", azul: "#3E5A99", beige: "#E8D7C3", fucsia: "#D63384", violeta: "#8E5BB5"
   };
-  const sinTildes = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
+  const sinTildes = (s) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
   function colorDe(nombre) {
     const n = sinTildes(nombre);
     if (COLORES[n]) return COLORES[n];
@@ -47,6 +133,12 @@
     }
     const clave = Object.keys(COLORES).find((k) => n.startsWith(k));
     return clave ? COLORES[clave] : "#E9D5DF";
+  }
+
+  // Aplica por JS (CSSOM) lo que antes iba en style="": así la CSP puede prohibir estilos inline
+  function aplicarEstilos(raiz) {
+    $$("[data-color]", raiz).forEach((el) => el.style.setProperty("--c", colorDe(el.dataset.color)));
+    $$("[data-i]", raiz).forEach((el) => el.style.setProperty("--i", Number(el.dataset.i) || 0));
   }
 
   const linkWhatsApp = (texto) =>
@@ -78,13 +170,35 @@
     saliendoPorLink: false
   };
 
+  /* El localStorage lo puede editar cualquiera desde su navegador, así que no se
+     confía en nada de lo que trae: cada ítem se reconstruye desde el catálogo y
+     solo se aceptan talles y colores que ese producto realmente tiene. */
   function cargarCarrito() {
+    let datos;
     try {
-      const datos = JSON.parse(localStorage.getItem(CLAVE_CARRITO) || "[]");
-      return datos.filter((i) => PRODUCTOS.some((p) => p.id === i.id) && i.cantidad > 0);
+      const crudo = localStorage.getItem(CLAVE_CARRITO);
+      if (!crudo || crudo.length > 20000) return [];
+      datos = JSON.parse(crudo);
     } catch {
       return [];
     }
+    if (!Array.isArray(datos)) return [];
+    const limpio = [];
+    for (const i of datos.slice(0, 50)) {
+      if (!i || typeof i !== "object") continue;
+      const p = PRODUCTOS.find((x) => x.id === i.id);
+      if (!p) continue;
+      const talle = p.talles.length ? p.talles.find((t) => t === i.talle) : "";
+      const color = p.colores.length ? p.colores.find((c) => c === i.color) : "";
+      if (talle === undefined || color === undefined) continue;
+      const cantidad = Number.isInteger(i.cantidad) && i.cantidad >= 1 ? Math.min(20, i.cantidad) : 0;
+      if (!cantidad) continue;
+      const clave = claveItem(p.id, talle, color);
+      const repetido = limpio.find((x) => x.clave === clave);
+      if (repetido) repetido.cantidad = Math.min(20, repetido.cantidad + cantidad);
+      else limpio.push({ clave, id: p.id, talle, color, cantidad });
+    }
+    return limpio;
   }
   function guardarCarrito() {
     try { localStorage.setItem(CLAVE_CARRITO, JSON.stringify(estado.carrito)); } catch { /* modo privado */ }
@@ -112,7 +226,7 @@
   }
 
   function iniciarLinks() {
-    $$('[data-link="whatsapp"]').forEach((a) => (a.href = linkWhatsApp("Hola Bel Intimma! Quería hacer una consulta.")));
+    $$('[data-link="whatsapp"]').forEach((a) => (a.href = linkWhatsApp(`Hola ${T.nombre}! Quería hacer una consulta.`)));
     $$('[data-link="instagram"]').forEach((a) => (a.href = `https://www.instagram.com/${T.instagram}/`));
     $$('[data-link="tiktok"]').forEach((a) => (a.href = `https://www.tiktok.com/@${T.tiktok}`));
     $$("[data-zona]").forEach((el) => (el.textContent = T.zona));
@@ -194,11 +308,11 @@
       : "";
     const colores = (p.colores || []);
     const muestras = colores.length
-      ? `<span class="muestras" aria-hidden="true">${colores.slice(0, 5).map((c) => `<span class="muestra" style="--c:${colorDe(c)}"></span>`).join("")}</span>
+      ? `<span class="muestras" aria-hidden="true">${colores.slice(0, 5).map((c) => `<span class="muestra" data-color="${escapar(c)}"></span>`).join("")}</span>
          <span class="solo-lector">Colores: ${escapar(colores.join(", "))}.</span>`
       : "<span></span>";
     const talles = (p.talles || []).length ? `<span class="tarjeta__talles">${escapar(p.talles[0])} al ${escapar(p.talles[p.talles.length - 1])}</span>` : "";
-    return `<li class="tarjeta" data-cat="${escapar(p.categoria)}" style="--i:${i}">
+    return `<li class="tarjeta" data-cat="${escapar(p.categoria)}" data-i="${i}">
       <div class="tarjeta__media">${etiqueta}${media(p, { conSegunda: true })}</div>
       <div class="tarjeta__info">
         <h3 class="tarjeta__nombre"><a class="tarjeta__abrir" href="#producto=${encodeURIComponent(p.id)}">${escapar(p.nombre)}</a></h3>
@@ -220,6 +334,7 @@
     const lista = estado.filtro === "todos" ? PRODUCTOS : PRODUCTOS.filter((p) => p.categoria === estado.filtro);
     const grilla = $("[data-grilla]");
     grilla.innerHTML = lista.map(tarjeta).join("");
+    aplicarEstilos(grilla);
     if (animar && !movimientoReducido) $$(".tarjeta", grilla).forEach((t) => t.classList.add("entra"));
     $("[data-vacia]").hidden = lista.length > 0;
     $("[data-cantidad]").textContent = `${lista.length} ${lista.length === 1 ? "producto" : "productos"}`;
@@ -283,7 +398,7 @@
         <legend><span>${titulo}</span>${extra}</legend>
         <div class="selector__opciones">
           ${opciones.map((o) => `<label class="opcion"><input type="radio" name="${nombre}" value="${escapar(o)}" ${unica ? "checked" : ""}>
-            <span>${conMuestra ? `<i class="muestra" style="--c:${colorDe(o)}" aria-hidden="true"></i>` : ""}${escapar(o)}</span></label>`).join("")}
+            <span>${conMuestra ? `<i class="muestra" data-color="${escapar(o)}" aria-hidden="true"></i>` : ""}${escapar(o)}</span></label>`).join("")}
         </div>
         <p class="selector__error" id="error-${nombre}" hidden>Elegí ${nombre === "talle" ? "un talle" : "un color"} para sumarlo.</p>
       </fieldset>`;
@@ -318,13 +433,14 @@
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12a3 3 0 1 1 0-.01M15 6.5 9.8 10.5M15 17.5l-5.2-4M18 6.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0ZM18 17.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"/></svg>
             Compartir
           </button>
-          <a class="link-btn" target="_blank" rel="noopener" href="${linkWhatsApp(`Hola Bel Intimma! Quería consultar por el ${p.nombre}.`)}">
+          <a class="link-btn" target="_blank" rel="noopener noreferrer" href="${escapar(linkWhatsApp(`Hola ${T.nombre}! Quería consultar por el ${p.nombre}.`))}">
             Consultar por WhatsApp
           </a>
         </div>
       </div>`;
 
     const ficha = $("[data-ficha]");
+    aplicarEstilos(ficha);
     let cantidad = 1;
     const valor = $("[data-cant-valor]", ficha);
     const menos = $('[data-cant="-1"]', ficha);
@@ -399,6 +515,16 @@
     dialogo("producto").close();
   }
 
+  // Lee el id de "#producto=..." sin romperse con links mal formados o manipulados
+  function idDesdeHash(hash) {
+    try {
+      const id = decodeURIComponent(hash.slice(10));
+      return ID_VALIDO.test(id) ? id : null;
+    } catch {
+      return null;
+    }
+  }
+
   function iniciarRutas() {
     const d = dialogo("producto");
     d.addEventListener("close", () => {
@@ -422,7 +548,11 @@
       const h = location.hash;
       if (h.startsWith("#producto=")) {
         estado.abiertoDesdeAdentro = true;
-        abrirProducto(decodeURIComponent(h.slice(10)));
+        const id = idDesdeHash(h);
+        if (!id || !abrirProducto(id)) {
+          history.replaceState(null, "", location.pathname + location.search);
+          if (d.open) d.close();
+        }
         return;
       }
       if (d.open) d.close();
@@ -430,14 +560,14 @@
 
     // Si alguien entra con un link a un producto (ej. desde una historia)
     if (location.hash.startsWith("#producto=")) {
-      const ok = abrirProducto(decodeURIComponent(location.hash.slice(10)));
+      const id = idDesdeHash(location.hash);
+      const ok = id && abrirProducto(id);
       if (!ok) history.replaceState(null, "", location.pathname + location.search);
     }
   }
 
   /* ---------- pedido ---------- */
 
-  const claveItem = (id, talle, color) => [id, talle, color].join("|");
   const productoDe = (item) => PRODUCTOS.find((p) => p.id === item.id);
   const totalUnidades = () => estado.carrito.reduce((s, i) => s + i.cantidad, 0);
   const total = () => estado.carrito.reduce((s, i) => s + (productoDe(i)?.precio || 0) * i.cantidad, 0);
@@ -547,9 +677,16 @@
       if (nombre.value.trim()) { nombre.removeAttribute("aria-invalid"); errorNombre.hidden = true; }
     });
 
+    // Lo que escribe la clienta se limpia antes de ir al mensaje: sin saltos de línea
+    // ni símbolos de formato de WhatsApp (*negrita*, _cursiva_, ~tachado~, `código`),
+    // para que no se pueda simular un "*Total*" falso ni desordenar el pedido.
+    const limpiarEntrada = (v, max) => texto(String(v || "").replace(/[*_~`]/g, ""), max);
+    let ultimoEnvio = 0;
+
     form.addEventListener("submit", (e) => {
       e.preventDefault();
-      if (!nombre.value.trim()) {
+      const nombreLimpio = limpiarEntrada(nombre.value, 60);
+      if (!nombreLimpio) {
         nombre.setAttribute("aria-invalid", "true");
         nombre.setAttribute("aria-describedby", "p-nombre-error");
         errorNombre.hidden = false;
@@ -560,9 +697,18 @@
         mostrarTostada("Falta cargar el número de WhatsApp en js/config.js", false);
         return;
       }
+      // Evita abrir WhatsApp varias veces por un doble toque
+      if (Date.now() - ultimoEnvio < 3000) return;
+      ultimoEnvio = Date.now();
+
+      // Se vuelve a validar el carrito contra el catálogo justo antes de enviar
+      estado.carrito = estado.carrito.filter((i) => productoDe(i));
+      if (!estado.carrito.length) { renderPedido(); return; }
+
       const datos = new FormData(form);
-      const entrega = T.entregas.find((o) => o.id === datos.get("entrega"));
-      const zona = String(datos.get("zona") || "").trim();
+      const entrega = T.entregas.find((o) => o.id === datos.get("entrega")) || T.entregas[0];
+      const pago = T.mediosDePago.find((m) => m === datos.get("pago")) || T.mediosDePago[0] || "";
+      const zona = entrega.pideDireccion ? limpiarEntrada(datos.get("zona"), 80) : "";
 
       const lineas = estado.carrito.map((i) => {
         const p = productoDe(i);
@@ -576,12 +722,13 @@
         "",
         `*Total: ${precio(total())}*`,
         "",
-        `Nombre: ${nombre.value.trim()}`,
-        `Entrega: ${entrega ? entrega.nombre : ""}${entrega && entrega.pideDireccion && zona ? ` (${zona})` : ""}`,
-        `Pago: ${datos.get("pago")}`
-      ].join("\n");
+        `Nombre: ${nombreLimpio}`,
+        `Entrega: ${entrega.nombre}${zona ? ` (${zona})` : ""}`,
+        pago ? `Pago: ${pago}` : ""
+      ].filter((l, n, arr) => l !== "" || arr[n - 1] !== "").join("\n");
 
-      window.open(linkWhatsApp(msg), "_blank", "noopener");
+      // linkWhatsApp codifica todo el texto con encodeURIComponent
+      window.open(linkWhatsApp(msg), "_blank", "noopener,noreferrer");
       $("[data-enviado]").hidden = false;
     });
 
@@ -669,6 +816,7 @@
 
   /* ---------- arranque ---------- */
 
+  guardarCarrito(); // reescribe el localStorage ya validado (descarta lo manipulado)
   iniciarAvisos();
   iniciarLinks();
   iniciarAvatar();
