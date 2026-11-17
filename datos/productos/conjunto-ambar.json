@@ -1,8 +1,12 @@
 {
+  "orden": 1,
   "nombre": "Conjunto Ámbar",
   "categoria": "sin-aro",
   "precio": 16900,
-  "fotos": [],
+  "precioAntes": null,
+  "fotos": [
+    "/img/productos/pasted-image-1794944313071.webp"
+  ],
   "talles": [
     "S",
     "M",
@@ -16,6 +20,5 @@
   ],
   "descripcion": "Top triangular de puntilla con breteles regulables y bombacha colaless al tono. Sin aro y sin push up, para usar todo el día.",
   "etiqueta": "Nuevo",
-  "disponible": true,
-  "orden": 1
+  "disponible": true
 }
