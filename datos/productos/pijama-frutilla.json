@@ -1,8 +1,13 @@
 {
-  "nombre": "Pijama Frutilla",
+  "orden": 8,
+  "nombre": "Pijama Bruselas Lunares Negros",
   "categoria": "pijamas",
-  "precio": 27900,
-  "fotos": [],
+  "precio": 25000,
+  "precioAntes": null,
+  "fotos": [
+    "/img/productos/1000947097.webp",
+    "/img/productos/1000965633.webp"
+  ],
   "talles": [
     "S",
     "M",
@@ -10,10 +15,9 @@
     "XL"
   ],
   "colores": [
-    "Rosa estampado"
+    "Negro con lunares blancos"
   ],
-  "descripcion": "Camisa manga corta con ribete y short de modal. Fresco para el verano, suave al tacto.",
+  "descripcion": "Camisero manga corta y short de tela Bruselas. Liviano, fresco y perfecto para el verano.",
   "etiqueta": "Nuevo",
-  "disponible": true,
-  "orden": 8
+  "disponible": true
 }
