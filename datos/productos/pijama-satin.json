@@ -1,20 +1,24 @@
 {
-  "nombre": "Pijama Satín",
+  "orden": 9,
+  "nombre": "Pijama Camisero Lunares Blanco",
   "categoria": "pijamas",
-  "precio": 32500,
-  "fotos": [],
+  "precio": 25000,
+  "precioAntes": null,
+  "fotos": [
+    "/img/productos/1000947098.webp",
+    "/img/productos/1000965653.webp",
+    "/img/productos/1000965633.webp"
+  ],
   "talles": [
     "S",
     "M",
-    "L"
+    "L",
+    "XL"
   ],
   "colores": [
-    "Champagne",
-    "Rosa",
-    "Negro"
+    "Blanco con lunares negros"
   ],
-  "descripcion": "Camisa con botones y short de satén con ribete en contraste. Ideal para regalar.",
-  "etiqueta": "",
-  "disponible": true,
-  "orden": 9
+  "descripcion": "Camisero manga corta y short de tela Bruselas. Liviano, fresco y perfecto para el verano.",
+  "etiqueta": "Nuevo",
+  "disponible": true
 }
