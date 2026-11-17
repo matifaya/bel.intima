@@ -1,6 +1,6 @@
 {
   "nombre": "Bel Intimma",
-  "whatsapp": "5491158177799",
+  "whatsapp": "5491128800758",
   "instagram": "bel.intimma",
   "tiktok": "bel.intimma",
   "zona": "Gral. San Martín, Buenos Aires",
@@ -11,12 +11,11 @@
     "Retiro en Gral. San Martín y envíos a coordinar",
     "Consultá talles por WhatsApp, te asesoramos"
   ],
-  "descuentoTransferencia": 0,
+  "descuentoTransferencia": 10,
   "mediosDePago": [
-    "Transferencia",
     "Mercado Pago",
-    "Efectivo",
-    "Tarjetas de débito y crédito"
+    "Transferencia",
+    "Efectivo"
   ],
   "entregas": [
     {
