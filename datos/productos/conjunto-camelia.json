@@ -22,9 +22,18 @@
     }
   ],
   "colores": [
-    "Blanco",
-    "Negro",
-    "Rojo"
+    {
+      "color": "Blanco",
+      "agotado": false
+    },
+    {
+      "color": "Negro",
+      "agotado": false
+    },
+    {
+      "color": "Rojo",
+      "agotado": false
+    }
   ],
   "descripcion": "Corpiño con aro de taza entera, buena contención para talles grandes. Bombacha culotte de encaje.",
   "etiqueta": "",

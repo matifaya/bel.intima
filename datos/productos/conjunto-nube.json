@@ -19,7 +19,10 @@
     }
   ],
   "colores": [
-    "Rosa bebé"
+    {
+      "color": "Rosa bebé",
+      "agotado": false
+    }
   ],
   "descripcion": "Top de microfibra con taza soft removible y bombacha tiro alto. El más cómodo para dormir o estar en casa.",
   "etiqueta": "Oferta",

@@ -237,6 +237,12 @@ def armar_datos() -> str:
 
     productos = []
     for ident, d in leer_carpeta("productos"):
+        colores = d.get("colores") if isinstance(d.get("colores"), list) else []
+        nombres_talles = {t.get("talle") if isinstance(t, dict) else t for t in d.get("talles") or []} if isinstance(d.get("talles"), list) else set()
+        for c in colores:
+            for t in (c.get("tallesAgotados") or []) if isinstance(c, dict) and isinstance(c.get("tallesAgotados"), list) else []:
+                if t not in nombres_talles:
+                    print(f"  ! Aviso: {ident}, color {c.get('color')}: el talle sin stock «{t}» no está en «Talles» y se ignora")
         fotos = [ruta_foto(f) for f in d.get("fotos") or [] if isinstance(f, str)] if isinstance(d.get("fotos"), list) else []
         for foto in fotos:
             if not (RAIZ / foto).is_file():
@@ -253,7 +259,15 @@ def armar_datos() -> str:
             "tallesAgotados": [t.get("talle") for t in d.get("talles") or []
                                if isinstance(t, dict) and t.get("agotado") is True]
                               if isinstance(d.get("talles"), list) else [],
-            "colores": d.get("colores"),
+            # Colores: [{"color": "Negro", "agotado": false, "tallesAgotados": ["M"]}, ...] o ["Negro", ...]
+            "colores": [c.get("color") if isinstance(c, dict) else c for c in colores],
+            "coloresAgotados": [c.get("color") for c in colores if isinstance(c, dict) and c.get("agotado") is True],
+            "sinStockPorColor": {
+                c.get("color"): [t for t in c.get("tallesAgotados") or [] if isinstance(t, str)]
+                for c in colores
+                if isinstance(c, dict) and isinstance(c.get("color"), str) and isinstance(c.get("tallesAgotados"), list)
+                and c.get("tallesAgotados")
+            },
             "fotos": fotos,
             "descripcion": d.get("descripcion"),
             "etiqueta": d.get("etiqueta"),

@@ -104,6 +104,11 @@
       const fotos = Array.isArray(p.fotos) ? p.fotos.filter((f) => fotoValida(f) || (avisar(`${p.id}: se ignoró la foto "${texto(f, 80)}" (tiene que estar en img/ y ser jpg, png, webp o avif).`), false)) : [];
       vistos.add(p.id);
       const talles = listaDeTextos(p.talles, 12, 15);
+      const colores = listaDeTextos(p.colores, 30, 12);
+      // Talles sin stock de cada color: { "Negro": ["M"] } (solo colores y talles que existen)
+      const porColor = p.sinStockPorColor && typeof p.sinStockPorColor === "object" ? p.sinStockPorColor : {};
+      const sinStockPorColor = new Map(colores.map((c) => [c,
+        Object.hasOwn(porColor, c) ? listaDeTextos(porColor[c], 12, 15).filter((t) => talles.includes(t)) : []]));
       return [{
         id: p.id,
         nombre: texto(p.nombre, 80) || p.id,
@@ -113,7 +118,9 @@
         talles,
         // Talles sin stock: se muestran tachados y no se pueden elegir
         tallesAgotados: listaDeTextos(p.tallesAgotados, 12, 15).filter((t) => talles.includes(t)),
-        colores: listaDeTextos(p.colores, 30, 12),
+        colores,
+        coloresAgotados: listaDeTextos(p.coloresAgotados, 30, 12).filter((c) => colores.includes(c)),
+        sinStockPorColor,
         fotos: fotos.slice(0, 8),
         descripcion: texto(p.descripcion, 400),
         etiqueta: texto(p.etiqueta, 20)
@@ -134,6 +141,18 @@
   }
 
   const T = validarConfig(window.TIENDA);
+
+  /* Stock: ¿hay esta combinación? Un talle o un color sin stock no se puede elegir, y
+     cada color puede tener sus propios talles sin stock. */
+  const hay = (p, talle, color) =>
+    !(talle && p.tallesAgotados.includes(talle)) &&
+    !(color && p.coloresAgotados.includes(color)) &&
+    !(talle && color && p.sinStockPorColor.get(color).includes(talle));
+  const opcionesDe = (lista) => (lista.length ? lista : [""]);
+  // Un talle (o color) que no está en ninguna combinación con stock queda deshabilitado
+  const talleSinStock = (p, t) => !opcionesDe(p.colores).some((c) => hay(p, t, c));
+  const colorSinStock = (p, c) => !opcionesDe(p.talles).some((t) => hay(p, t, c));
+  const productoSinStock = (p) => !opcionesDe(p.talles).some((t) => opcionesDe(p.colores).some((c) => hay(p, t, c)));
   const PRODUCTOS = validarProductos(window.PRODUCTOS, T.categorias);
   const D = window.DIBUJOS;
 
@@ -235,9 +254,9 @@
       if (!i || typeof i !== "object") continue;
       const p = PRODUCTOS.find((x) => x.id === i.id);
       if (!p) continue;
-      const talle = p.talles.length ? p.talles.find((t) => t === i.talle && !p.tallesAgotados.includes(t)) : "";
+      const talle = p.talles.length ? p.talles.find((t) => t === i.talle) : "";
       const color = p.colores.length ? p.colores.find((c) => c === i.color) : "";
-      if (talle === undefined || color === undefined) continue;
+      if (talle === undefined || color === undefined || !hay(p, talle, color)) continue; // se quedó sin stock
       const cantidad = Number.isInteger(i.cantidad) && i.cantidad >= 1 ? Math.min(20, i.cantidad) : 0;
       if (!cantidad) continue;
       const clave = claveItem(p.id, talle, color);
@@ -387,7 +406,7 @@
       : "";
     const colores = (p.colores || []);
     const muestras = colores.length
-      ? `<span class="muestras" aria-hidden="true">${colores.slice(0, 5).map((c) => `<span class="muestra" data-color="${escapar(c)}"></span>`).join("")}</span>
+      ? `<span class="muestras" aria-hidden="true">${colores.slice(0, 5).map((c) => `<span class="muestra${colorSinStock(p, c) ? " muestra--agotada" : ""}" data-color="${escapar(c)}"></span>`).join("")}</span>
          <span class="solo-lector">${escapar(tx("accesibilidad.colores", { colores: colores.join(", ") }))}</span>`
       : "<span></span>";
     const talles = (p.talles || []).length ? `<span class="tarjeta__talles">${escapar(tx("catalogo.rangoTalles", { desde: p.talles[0], hasta: p.talles[p.talles.length - 1] }))}</span>` : "";
@@ -474,24 +493,25 @@
       .join("");
     const puntos = fotos.length > 1 ? `<div class="ficha__puntos" aria-hidden="true">${fotos.map((_, i) => `<span class="${i ? "" : "activo"}"></span>`).join("")}</div>` : "";
 
-    const grupo = (nombre, titulo, opciones, extra = "", conMuestra = false, agotados = []) => {
+    const grupo = (nombre, titulo, opciones, extra = "", conMuestra = false, sinStock = () => false) => {
       if (!opciones || !opciones.length) return "";
-      const unica = opciones.filter((o) => !agotados.includes(o)).length === 1 && opciones.length === 1;
+      const agotados = opciones.filter(sinStock);
+      const unica = opciones.length === 1 && !agotados.length;
       return `<fieldset class="selector" data-selector="${nombre}">
         <legend><span>${escapar(titulo)}</span>${extra}</legend>
         <div class="selector__opciones">
           ${opciones.map((o) => {
             const agotado = agotados.includes(o);
             return `<label class="opcion${agotado ? " opcion--agotada" : ""}"><input type="radio" name="${nombre}" value="${escapar(o)}" ${unica && !agotado ? "checked" : ""} ${agotado ? "disabled" : ""}>
-            <span>${conMuestra ? `<i class="muestra" data-color="${escapar(o)}" aria-hidden="true"></i>` : ""}${escapar(o)}${agotado ? `<em class="solo-lector">, ${escapar(tx("ficha.talleSinStock"))}</em>` : ""}</span></label>`;
+            <span>${conMuestra ? `<i class="muestra" data-color="${escapar(o)}" aria-hidden="true"></i>` : ""}${escapar(o)}<em class="solo-lector" ${agotado ? "" : "hidden"}>, ${escapar(tx("ficha.talleSinStock"))}</em></span></label>`;
           }).join("")}
         </div>
         <p class="selector__error" id="error-${nombre}" hidden>${escapar(nombre === "talle" ? tx("ficha.errorTalle") : tx("ficha.errorColor"))}</p>
       </fieldset>`;
     };
 
-    // Si no queda ningún talle, no se puede agregar
-    const sinStock = p.talles.length > 0 && p.talles.every((t) => p.tallesAgotados.includes(t));
+    // Si no queda ninguna combinación con stock, no se puede agregar
+    const sinStock = productoSinStock(p);
 
     $("[data-ficha]").innerHTML = `
       <div class="ficha__media">
@@ -506,8 +526,8 @@
           </div>
           ${bloquePrecio(p)}
           ${p.descripcion ? `<p class="ficha__desc">${escapar(p.descripcion)}</p>` : ""}
-          ${grupo("talle", tx("ficha.talle"), p.talles, `<a href="#talles" data-salir>${escapar(tx("ficha.linkGuia"))}</a>`, false, p.tallesAgotados)}
-          ${grupo("color", tx("ficha.color"), p.colores, "", true)}
+          ${grupo("talle", tx("ficha.talle"), p.talles, `<a href="#talles" data-salir>${escapar(tx("ficha.linkGuia"))}</a>`, false, (t) => talleSinStock(p, t))}
+          ${grupo("color", tx("ficha.color"), p.colores, "", true, (c) => colorSinStock(p, c))}
         </div>
         <div class="ficha__comprar">
           ${sinStock ? `<p class="ficha__sin-stock">${escapar(tx("ficha.sinStock"))}</p>` : `
@@ -540,11 +560,32 @@
       menos.disabled = cantidad === 1;
     }));
 
+    /* Talle y color dependen uno del otro: al elegir un color se tachan los talles que no hay
+       en ese color (y al revés). Se pueden tocar igual: si la combinación no existe, se
+       desmarca la otra elección para que la clienta elija de nuevo. */
+    const marcado = (nombre) => $(`[data-selector="${nombre}"] input:checked`, ficha)?.value || "";
+    const actualizarStock = (origen) => {
+      const otro = origen === "talle" ? "color" : "talle";
+      if (marcado("talle") && marcado("color") && !hay(p, marcado("talle"), marcado("color"))) {
+        $(`[data-selector="${otro}"] input:checked`, ficha).checked = false;
+      }
+      const talle = marcado("talle");
+      const color = marcado("color");
+      for (const [nombre, sinElegir] of [["talle", (v) => !hay(p, v, color)], ["color", (v) => !hay(p, talle, v)]]) {
+        $$(`[data-selector="${nombre}"] input:not(:disabled)`, ficha).forEach((input) => {
+          const falta = sinElegir(input.value);
+          input.closest(".opcion").classList.toggle("opcion--agotada", falta);
+          $("em", input.closest(".opcion")).hidden = !falta;
+        });
+      }
+    };
     $$(".selector input", ficha).forEach((input) => input.addEventListener("change", () => {
       const sel = input.closest(".selector");
       sel.classList.remove("con-error");
       $(".selector__error", sel).hidden = true;
+      actualizarStock(sel.dataset.selector);
     }));
+    actualizarStock("talle");
 
     $("[data-agregar]", ficha)?.addEventListener("click", () => {
       const elegido = (nombre) => {
@@ -558,6 +599,7 @@
       };
       const talle = elegido("talle");
       const color = elegido("color");
+      if (talle !== null && color !== null && !hay(p, talle, color)) return;
       if (talle === null || color === null) {
         const primerError = $(".selector.con-error", ficha);
         if (primerError) {

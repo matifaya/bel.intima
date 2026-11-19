@@ -18,8 +18,14 @@
     }
   ],
   "colores": [
-    "Rosa viejo",
-    "Nude"
+    {
+      "color": "Rosa viejo",
+      "agotado": false
+    },
+    {
+      "color": "Nude",
+      "agotado": false
+    }
   ],
   "descripcion": "Balconette con aro y push up suave. Breteles regulables y desmontables. Bombacha vedetina de tul bordado.",
   "etiqueta": "Últimos",

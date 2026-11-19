@@ -31,8 +31,9 @@ Si usás una compu que no es tuya, al terminar tocá tu foto (arriba a la derech
    - **Fotos:** tocá **Explorar** y elegí una o varias de la galería. **La primera es la que se ve
      en el catálogo.** Se achican solas y se les borra la ubicación: no tenés que hacer nada.
      Si no subís fotos, se muestra un dibujito de la categoría.
-   - **Talles:** uno por recuadro, en orden. Con **Añadir Talle** sumás otro.
-   - **Colores:** uno por renglón. Con **Añadir** sumás otro.
+   - **Talles:** un producto nuevo ya viene con S, M, L, XL y XXL. Borrá los que no van (✕) o
+     cambiá el texto (por ejemplo, 85, 90, 95 para corpiños con aro). Con **Añadir Talle** sumás otro.
+   - **Colores:** uno por recuadro. Con **Añadir Color** sumás otro.
    - **Descripción:** tela, detalles, cómo calza.
    - **Etiqueta** (opcional): *Nuevo*, *Oferta*, *Últimos*… Si dice *Oferta*, se ve en fucsia.
 3. Tocá **Guardar**.
@@ -48,6 +49,18 @@ Entrá al producto → en **Talles**, activá **Sin stock** en el talle que se t
 En la página ese talle se ve más claro y tachado, y no se puede elegir. Cuando vuelva a entrar,
 lo desactivás. Si todos los talles están sin stock, en lugar del botón «Agregar al pedido» aparece
 un aviso (el texto se cambia en *Textos de la página → Ficha de producto*).
+
+## Se terminó un color, o un talle de un color
+
+Cada color tiene su propio stock. Entrá al producto → **Colores**:
+
+- **Se terminó todo un color:** activá **Sin stock (todo este color)**. Se ve tachado y no se puede elegir.
+- **En un color faltan algunos talles:** en ese color, en **Talles sin stock en este color**,
+  tildá los talles que faltan. Cuando la clienta elige ese color, esos talles se ven tachados; y
+  si primero elige el talle, se tachan los colores que no lo tienen.
+
+Tocá **Guardar**. Si un pedido guardado en el celular de una clienta tenía algo que se quedó sin
+stock, se saca solo del pedido.
 
 ## Sin stock de todo el producto
 

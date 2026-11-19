@@ -129,7 +129,7 @@ archivo es el id que se usa en el link):
   "precioAntes": 21000,
   "fotos": ["/img/productos/conjunto-lila-1.webp"],
   "talles": [{ "talle": "S", "agotado": false }, { "talle": "M", "agotado": true }],
-  "colores": ["Lila", "Negro"],
+  "colores": [{ "color": "Lila", "agotado": false }, { "color": "Negro", "agotado": false, "tallesAgotados": ["S"] }],
   "descripcion": "Bralette de encaje con breteles regulables y bombacha colaless.",
   "etiqueta": "Nuevo",
   "disponible": true,
@@ -137,8 +137,9 @@ archivo es el id que se usa en el link):
 }
 ```
 
-- `agotado: true` muestra el talle tachado y no deja elegirlo. (También se aceptan talles como
-  texto simple, `"talles": ["S", "M"]`, sin stock.)
+- `agotado: true` muestra el talle o el color tachado y no deja elegirlo. En cada color,
+  `tallesAgotados` son los talles que no hay en ese color. (También se aceptan talles y colores
+  como texto simple, `"talles": ["S", "M"]`.)
 - `categoria` es el nombre de un archivo de `datos/categorias/` (sin `.json`).
 - `orden` lo maneja el panel al arrastrar. Sin `orden`, el producto va al final.
 - Si subís fotos a mano, **limpialas antes**: `python3 scripts/limpiar_fotos.py` (ver `SECURITY.md`).

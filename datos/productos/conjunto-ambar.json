@@ -24,9 +24,18 @@
     }
   ],
   "colores": [
-    "Rosa",
-    "Negro",
-    "Blanco"
+    {
+      "color": "Rosa",
+      "agotado": false
+    },
+    {
+      "color": "Negro",
+      "agotado": false
+    },
+    {
+      "color": "Blanco",
+      "agotado": false
+    }
   ],
   "descripcion": "Top triangular de puntilla con breteles regulables y bombacha colaless al tono. Sin aro y sin push up, para usar todo el día.",
   "etiqueta": "Nuevo",

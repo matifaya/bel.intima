@@ -18,8 +18,14 @@
     }
   ],
   "colores": [
-    "Lila",
-    "Celeste"
+    {
+      "color": "Lila",
+      "agotado": false
+    },
+    {
+      "color": "Celeste",
+      "agotado": false
+    }
   ],
   "descripcion": "Bralette de algodón con lycra y bombacha vedetina. Suave, liviano y sin costuras que marquen.",
   "etiqueta": "",

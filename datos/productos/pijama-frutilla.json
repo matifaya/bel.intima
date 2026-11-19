@@ -27,7 +27,10 @@
     }
   ],
   "colores": [
-    "Negro con lunares blancos"
+    {
+      "color": "Negro con lunares blancos",
+      "agotado": false
+    }
   ],
   "descripcion": "Camisero manga corta y short de tela Bruselas. Liviano, fresco y perfecto para el verano.",
   "etiqueta": "Nuevo",

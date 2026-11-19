@@ -23,8 +23,14 @@
     }
   ],
   "colores": [
-    "Blanco y rosa",
-    "Gris y rosa"
+    {
+      "color": "Blanco y rosa",
+      "agotado": false
+    },
+    {
+      "color": "Gris y rosa",
+      "agotado": false
+    }
   ],
   "descripcion": "Remera y short de algodón peinado con estampa de corazones. El de todos los días.",
   "etiqueta": "Oferta",

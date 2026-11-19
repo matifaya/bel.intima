@@ -22,8 +22,14 @@
     }
   ],
   "colores": [
-    "Rosa",
-    "Negro"
+    {
+      "color": "Rosa",
+      "agotado": false
+    },
+    {
+      "color": "Negro",
+      "agotado": false
+    }
   ],
   "descripcion": "Corpiño con aro y taza soft, encaje en el escote y moñito central. Bombacha colaless de encaje al tono.",
   "etiqueta": "Nuevo",

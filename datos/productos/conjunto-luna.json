@@ -18,8 +18,14 @@
     }
   ],
   "colores": [
-    "Negro",
-    "Bordó"
+    {
+      "color": "Negro",
+      "agotado": false
+    },
+    {
+      "color": "Bordó",
+      "agotado": false
+    }
   ],
   "descripcion": "Encaje elastizado con espalda cruzada y bombacha cola less. Delicado y con buena sujeción sin aro.",
   "etiqueta": "",
