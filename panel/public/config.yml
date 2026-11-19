@@ -212,15 +212,6 @@ collections:
             widget: string
             maxlength: 80
             hint: "Se ve al pie de la página. Ej: Gral. San Martín, Buenos Aires"
-          - name: heroTitulo
-            label: Título principal
-            widget: string
-            maxlength: 90
-            hint: "La frase grande de arriba de todo."
-          - name: heroBajada
-            label: Texto debajo del título
-            widget: text
-            maxlength: 240
           - name: avisos
             label: Avisos de la franja de arriba
             widget: list
@@ -328,3 +319,585 @@ collections:
                 label: Respuesta
                 widget: text
                 maxlength: 600
+
+  # ------------------------------------------------------------------------
+  # Todos los textos de la página. Se generó a partir de la lista de textos;
+  # si agregás uno acá, agregalo también en datos/textos/ y usalo en index.html
+  # ({{seccion.clave}}) o en js/app.js (tx("seccion.clave")).
+  - name: textos
+    label: Textos de la página
+    label_singular: Textos
+    icon: edit_note
+    description: >-
+      Todos los textos de la página, por sección. Las palabras entre llaves, como
+      {producto} o {n}, se reemplazan solas por el dato que corresponde: dejalas tal cual.
+    editor:
+      preview: false
+    files:
+      - name: inicio
+        label: "Inicio (arriba de todo)"
+        file: /datos/textos/inicio.json
+        format: json
+        fields:
+          - name: titulo
+            label: "Título grande"
+            widget: string
+            maxlength: 160
+            hint: "La primera parte que se ve al entrar."
+          - name: bajada
+            label: "Texto debajo del título"
+            widget: text
+            maxlength: 300
+          - name: botonCatalogo
+            label: "Botón principal"
+            widget: string
+            maxlength: 160
+            hint: "Lleva al catálogo."
+          - name: botonComoComprar
+            label: "Botón secundario"
+            widget: string
+            maxlength: 160
+            hint: "Lleva a «Cómo comprar»."
+      - name: encabezado
+        label: "Encabezado y menú"
+        file: /datos/textos/encabezado.json
+        format: json
+        fields:
+          - name: logo
+            label: "Logo (texto)"
+            widget: string
+            maxlength: 160
+            hint: "La barra de arriba (con el logo y «Tu pedido») y el menú del celular."
+          - name: linkCatalogo
+            label: "Link «Catálogo» (compu)"
+            widget: string
+            maxlength: 160
+          - name: linkComoComprar
+            label: "Link «Cómo comprar» (compu)"
+            widget: string
+            maxlength: 160
+          - name: linkTalles
+            label: "Link «Talles» (compu)"
+            widget: string
+            maxlength: 160
+          - name: linkPreguntas
+            label: "Link «Preguntas» (compu)"
+            widget: string
+            maxlength: 160
+          - name: botonPedido
+            label: "Botón del pedido"
+            widget: string
+            maxlength: 160
+            hint: "Al lado de la bolsita."
+          - name: menuCatalogo
+            label: "Menú del celular: catálogo"
+            widget: string
+            maxlength: 160
+          - name: menuComoComprar
+            label: "Menú del celular: cómo comprar"
+            widget: string
+            maxlength: 160
+          - name: menuTalles
+            label: "Menú del celular: talles"
+            widget: string
+            maxlength: 160
+          - name: menuPagos
+            label: "Menú del celular: pagos"
+            widget: string
+            maxlength: 160
+          - name: menuPreguntas
+            label: "Menú del celular: preguntas"
+            widget: string
+            maxlength: 160
+          - name: menuWhatsapp
+            label: "Menú del celular: botón de WhatsApp"
+            widget: string
+            maxlength: 160
+      - name: catalogo
+        label: "Catálogo"
+        file: /datos/textos/catalogo.json
+        format: json
+        fields:
+          - name: circuloTalles
+            label: "Círculo «Talles»"
+            widget: string
+            maxlength: 160
+            hint: "Los círculos de arriba, los filtros y las tarjetas de productos.\\nLos círculos de categorías salen de «Categorías». Estos son los tres de información."
+          - name: circuloPagos
+            label: "Círculo «Pagos»"
+            widget: string
+            maxlength: 160
+          - name: circuloPreguntas
+            label: "Círculo «Preguntas»"
+            widget: string
+            maxlength: 160
+          - name: titulo
+            label: "Título"
+            widget: string
+            maxlength: 160
+          - name: filtroTodo
+            label: "Filtro para ver todo"
+            widget: string
+            maxlength: 160
+          - name: cantidadUno
+            label: "Cantidad (uno)"
+            widget: string
+            maxlength: 160
+            hint: "{n} es el número."
+          - name: cantidadVarios
+            label: "Cantidad (varios)"
+            widget: string
+            maxlength: 160
+            hint: "{n} es el número."
+          - name: rangoTalles
+            label: "Talles en la tarjeta"
+            widget: string
+            maxlength: 160
+            hint: "Ej: «S al XL». {desde} y {hasta} son el primer y el último talle."
+          - name: precioNota
+            label: "Aclaración al lado del precio"
+            widget: string
+            maxlength: 160
+            hint: "Texto chiquito al lado del precio de lista. Solo se ve si hay descuento por transferencia (Datos de la tienda)."
+          - name: precioTransferencia
+            label: "Precio con transferencia"
+            widget: string
+            maxlength: 160
+            hint: "Solo se ve si hay descuento. {precio} es el precio con descuento."
+          - name: vacio
+            label: "Categoría sin productos"
+            widget: text
+            maxlength: 300
+      - name: ficha
+        label: "Ficha de producto"
+        file: /datos/textos/ficha.json
+        format: json
+        fields:
+          - name: talle
+            label: "Título «Talle»"
+            widget: string
+            maxlength: 160
+            hint: "Lo que se ve al tocar un producto."
+          - name: linkGuia
+            label: "Link a la guía de talles"
+            widget: string
+            maxlength: 160
+          - name: color
+            label: "Título «Color»"
+            widget: string
+            maxlength: 160
+          - name: errorTalle
+            label: "Aviso si no eligió talle"
+            widget: string
+            maxlength: 160
+          - name: errorColor
+            label: "Aviso si no eligió color"
+            widget: string
+            maxlength: 160
+          - name: agregar
+            label: "Botón para agregar"
+            widget: string
+            maxlength: 160
+          - name: agregado
+            label: "Aviso al agregar"
+            widget: string
+            maxlength: 160
+            hint: "{producto} es el nombre, con el talle y el color."
+          - name: verPedido
+            label: "Botón del aviso"
+            widget: string
+            maxlength: 160
+          - name: compartir
+            label: "Botón compartir"
+            widget: string
+            maxlength: 160
+          - name: compartirTexto
+            label: "Texto al compartir"
+            widget: string
+            maxlength: 160
+            hint: "Lo que acompaña al link cuando la clienta comparte."
+          - name: linkCopiado
+            label: "Aviso de link copiado"
+            widget: string
+            maxlength: 160
+          - name: consultar
+            label: "Link de consulta"
+            widget: string
+            maxlength: 160
+      - name: pasos
+        label: "Cómo comprar"
+        file: /datos/textos/pasos.json
+        format: json
+        fields:
+          - name: titulo
+            label: "Título"
+            widget: string
+            maxlength: 160
+            hint: "La franja rosa con los pasos numerados."
+          - name: lista
+            label: "Pasos"
+            label_singular: Paso
+            widget: list
+            min: 1
+            max: 8
+            summary: "{{titulo}}"
+            fields:
+              - { name: titulo, label: Título, widget: string, maxlength: 60 }
+              - { name: texto, label: Texto, widget: text, maxlength: 300 }
+            hint: "Se numeran solos, en este orden."
+      - name: info
+        label: "Talles, pagos y entregas"
+        file: /datos/textos/info.json
+        format: json
+        fields:
+          - name: tallesTitulo
+            label: "Título de la guía de talles"
+            widget: string
+            maxlength: 160
+            hint: "Los títulos de esas secciones. Las tablas, los medios de pago y las entregas se cargan en «Datos de la tienda»."
+          - name: columnaTalle
+            label: "Primera columna de las tablas"
+            widget: string
+            maxlength: 160
+          - name: pagosTitulo
+            label: "Título de pagos y entregas"
+            widget: string
+            maxlength: 160
+          - name: mediosTitulo
+            label: "Subtítulo de medios de pago"
+            widget: string
+            maxlength: 160
+          - name: notaDescuento
+            label: "Aviso del descuento"
+            widget: string
+            maxlength: 160
+            hint: "Solo se ve si hay descuento. {descuento} es el número."
+          - name: entregasTitulo
+            label: "Subtítulo de entregas"
+            widget: string
+            maxlength: 160
+          - name: preguntasTitulo
+            label: "Título de preguntas frecuentes"
+            widget: string
+            maxlength: 160
+      - name: redes
+        label: "Redes y pie de página"
+        file: /datos/textos/redes.json
+        format: json
+        fields:
+          - name: titulo
+            label: "Título de la franja"
+            widget: string
+            maxlength: 160
+            hint: "La franja de Instagram y TikTok y el final de la página."
+          - name: texto
+            label: "Texto de la franja"
+            widget: text
+            maxlength: 300
+          - name: botonInstagram
+            label: "Botón de Instagram"
+            widget: string
+            maxlength: 160
+          - name: botonTiktok
+            label: "Botón de TikTok"
+            widget: string
+            maxlength: 160
+          - name: pieLogo
+            label: "Logo del pie (texto)"
+            widget: string
+            maxlength: 160
+          - name: pieDato
+            label: "Frase del pie"
+            widget: string
+            maxlength: 160
+            hint: "{zona} es la zona de «Datos de la tienda»."
+          - name: pieWhatsapp
+            label: "Link de WhatsApp"
+            widget: string
+            maxlength: 160
+          - name: pieInstagram
+            label: "Link de Instagram"
+            widget: string
+            maxlength: 160
+          - name: pieTiktok
+            label: "Link de TikTok"
+            widget: string
+            maxlength: 160
+          - name: pieDerechos
+            label: "Derechos"
+            widget: string
+            maxlength: 160
+            hint: "{año} es el año actual y {tienda} el nombre de la tienda."
+      - name: pedido
+        label: "Pedido"
+        file: /datos/textos/pedido.json
+        format: json
+        fields:
+          - name: titulo
+            label: "Título"
+            widget: string
+            maxlength: 160
+            hint: "La hoja de «Tu pedido», la barra del celular y los avisos."
+          - name: vacio
+            label: "Pedido vacío"
+            widget: string
+            maxlength: 160
+          - name: vacioNota
+            label: "Ayuda del pedido vacío"
+            widget: string
+            maxlength: 160
+          - name: irCatalogo
+            label: "Botón del pedido vacío"
+            widget: string
+            maxlength: 160
+          - name: prendaUna
+            label: "Cantidad (una)"
+            widget: string
+            maxlength: 160
+            hint: "{n} es el número."
+          - name: prendasVarias
+            label: "Cantidad (varias)"
+            widget: string
+            maxlength: 160
+            hint: "{n} es el número."
+          - name: barraBoton
+            label: "Botón de la barra del celular"
+            widget: string
+            maxlength: 160
+          - name: itemTalle
+            label: "Talle de cada prenda"
+            widget: string
+            maxlength: 160
+          - name: quitar
+            label: "Botón quitar"
+            widget: string
+            maxlength: 160
+          - name: quitado
+            label: "Aviso al quitar"
+            widget: string
+            maxlength: 160
+          - name: deshacer
+            label: "Botón deshacer"
+            widget: string
+            maxlength: 160
+          - name: nombre
+            label: "Campo nombre"
+            widget: string
+            maxlength: 160
+          - name: nombreEjemplo
+            label: "Ejemplo del nombre"
+            widget: string
+            maxlength: 160
+            hint: "Se ve en gris dentro del campo."
+          - name: nombreError
+            label: "Aviso si falta el nombre"
+            widget: string
+            maxlength: 160
+          - name: entrega
+            label: "Título de la entrega"
+            widget: string
+            maxlength: 160
+          - name: zona
+            label: "Campo localidad"
+            widget: string
+            maxlength: 160
+            hint: "Aparece si eligen una entrega que pide dirección."
+          - name: zonaEjemplo
+            label: "Ejemplo de la localidad"
+            widget: string
+            maxlength: 160
+          - name: pago
+            label: "Campo de pago"
+            widget: string
+            maxlength: 160
+          - name: total
+            label: "Total"
+            widget: string
+            maxlength: 160
+          - name: totalDescuento
+            label: "Total con descuento"
+            widget: string
+            maxlength: 160
+            hint: "Solo se ve si hay descuento."
+          - name: enviar
+            label: "Botón de enviar"
+            widget: string
+            maxlength: 160
+          - name: aclaracion
+            label: "Aclaración debajo del botón"
+            widget: text
+            maxlength: 300
+          - name: enviado
+            label: "Aviso después de enviar"
+            widget: text
+            maxlength: 300
+          - name: vaciar
+            label: "Botón vaciar"
+            widget: string
+            maxlength: 160
+          - name: faltaWhatsapp
+            label: "Aviso si falta el número"
+            widget: string
+            maxlength: 160
+            hint: "Solo aparece si el número de WhatsApp está mal cargado."
+      - name: whatsapp
+        label: "Mensajes de WhatsApp"
+        file: /datos/textos/whatsapp.json
+        format: json
+        fields:
+          - name: consulta
+            label: "Consulta general"
+            widget: string
+            maxlength: 160
+            hint: "Los mensajes que se arman solos. Las palabras entre llaves { } se reemplazan por los datos: no las borres.\\nBotones «WhatsApp» del menú y del pie."
+          - name: consultaProducto
+            label: "Consulta por un producto"
+            widget: string
+            maxlength: 160
+          - name: pedidoSaludo
+            label: "Pedido: saludo"
+            widget: string
+            maxlength: 160
+          - name: pedidoLinea
+            label: "Pedido: cada prenda"
+            widget: string
+            maxlength: 160
+            hint: "{producto} incluye el talle y el color."
+          - name: detalleTalle
+            label: "Talle en el pedido y en los avisos"
+            widget: string
+            maxlength: 160
+            hint: "Ej: «Conjunto Nube (talle M, Rosa)»."
+          - name: pedidoTotal
+            label: "Pedido: total"
+            widget: string
+            maxlength: 160
+            hint: "Entre asteriscos se ve en negrita en WhatsApp."
+          - name: pedidoNombre
+            label: "Pedido: nombre"
+            widget: string
+            maxlength: 160
+          - name: pedidoEntrega
+            label: "Pedido: entrega"
+            widget: string
+            maxlength: 160
+            hint: "{entrega} incluye la localidad si la escribió."
+          - name: pedidoPago
+            label: "Pedido: pago"
+            widget: string
+            maxlength: 160
+      - name: google
+        label: "Google y links compartidos"
+        file: /datos/textos/google.json
+        format: json
+        fields:
+          - name: titulo
+            label: "Título de la pestaña y de Google"
+            widget: string
+            maxlength: 160
+            hint: "Lo que se ve en la pestaña del navegador, en Google y en la vista previa al compartir el link.\\nIdeal: menos de 60 letras."
+          - name: descripcion
+            label: "Descripción en Google"
+            widget: text
+            maxlength: 300
+            hint: "Ideal: menos de 160 letras."
+          - name: compartirTitulo
+            label: "Título al compartir el link"
+            widget: string
+            maxlength: 160
+            hint: "WhatsApp, Instagram, etc."
+          - name: compartirDescripcion
+            label: "Descripción al compartir el link"
+            widget: string
+            maxlength: 160
+      - name: accesibilidad
+        label: "Accesibilidad"
+        file: /datos/textos/accesibilidad.json
+        format: json
+        fields:
+          - name: saltar
+            label: "Saltar al contenido"
+            widget: string
+            maxlength: 160
+            hint: "Textos que no se ven, pero que leen en voz alta los lectores de pantalla (personas ciegas o con baja visión). Conviene que sean claros.\\nAparece solo al navegar con teclado."
+          - name: avisos
+            label: "Franja de avisos"
+            widget: string
+            maxlength: 160
+          - name: abrirMenu
+            label: "Botón del menú"
+            widget: string
+            maxlength: 160
+          - name: logo
+            label: "Logo"
+            widget: string
+            maxlength: 160
+          - name: navPrincipal
+            label: "Menú principal"
+            widget: string
+            maxlength: 160
+          - name: bolsa
+            label: "Botón del pedido"
+            widget: string
+            maxlength: 160
+            hint: "{prendas} es la cantidad, ej. «2 prendas»."
+          - name: categorias
+            label: "Círculos de categorías"
+            widget: string
+            maxlength: 160
+          - name: filtros
+            label: "Filtros"
+            widget: string
+            maxlength: 160
+          - name: colores
+            label: "Colores de la tarjeta"
+            widget: string
+            maxlength: 160
+          - name: precioAntes
+            label: "Precio anterior"
+            widget: string
+            maxlength: 160
+          - name: galeria
+            label: "Fotos del producto"
+            widget: string
+            maxlength: 160
+          - name: fotoNumero
+            label: "Número de foto"
+            widget: string
+            maxlength: 160
+          - name: cantidad
+            label: "Cantidad"
+            widget: string
+            maxlength: 160
+          - name: cantidadDe
+            label: "Cantidad de una prenda"
+            widget: string
+            maxlength: 160
+          - name: restar
+            label: "Botón restar"
+            widget: string
+            maxlength: 160
+          - name: sumar
+            label: "Botón sumar"
+            widget: string
+            maxlength: 160
+          - name: tabla
+            label: "Tabla de talles"
+            widget: string
+            maxlength: 160
+          - name: cerrar
+            label: "Cerrar la ficha"
+            widget: string
+            maxlength: 160
+          - name: cerrarPedido
+            label: "Cerrar el pedido"
+            widget: string
+            maxlength: 160
+          - name: menu
+            label: "Menú del celular"
+            widget: string
+            maxlength: 160
+          - name: cerrarMenu
+            label: "Cerrar el menú"
+            widget: string
+            maxlength: 160

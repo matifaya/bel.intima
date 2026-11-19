@@ -1,0 +1,14 @@
+{
+  "talle": "Talle",
+  "linkGuia": "Guía de talles",
+  "color": "Color",
+  "errorTalle": "Elegí un talle para sumarlo.",
+  "errorColor": "Elegí un color para sumarlo.",
+  "agregar": "Agregar al pedido",
+  "agregado": "Agregado al pedido: {producto}",
+  "verPedido": "Ver pedido",
+  "compartir": "Compartir",
+  "compartirTexto": "{producto} en {tienda}",
+  "linkCopiado": "Link copiado",
+  "consultar": "Consultar por WhatsApp"
+}

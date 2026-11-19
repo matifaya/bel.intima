@@ -68,10 +68,26 @@ Lo mismo con **Categorías** para el orden de los botones.
 En **Datos de la tienda** hay tres partes:
 
 - **Contacto, pagos y entregas:** número de WhatsApp (donde llegan los pedidos), Instagram, TikTok,
-  la frase grande del inicio, los avisos de la franja rosa de arriba, el descuento por transferencia,
+  la zona, los avisos de la franja rosa de arriba, el descuento por transferencia,
   los medios de pago y las formas de entrega.
 - **Guía de talles:** las tablas de medidas.
 - **Preguntas frecuentes:** preguntas y respuestas. Si las borrás todas, la sección no se muestra.
+
+## Textos de la página
+
+En **Textos de la página** está **cada texto** de la página, ordenado por sección: el título grande
+del inicio, los botones, el menú, los pasos de «Cómo comprar», la hoja del pedido, los avisos que
+aparecen al agregar o quitar, el pie de página, y hasta el título que se ve en Google y en la
+vista previa cuando compartís el link.
+
+- **Las palabras entre llaves**, como `{producto}`, `{n}` o `{tienda}`, se reemplazan solas por el
+  dato (el nombre del producto, la cantidad, el nombre de la tienda). Dejalas tal cual; podés
+  cambiar todo lo que está alrededor.
+- **Mensajes de WhatsApp:** ahí cambiás cómo llegan los pedidos y las consultas. Lo que va
+  entre asteriscos (`*Total*`) se ve en negrita en WhatsApp.
+- **Accesibilidad:** son textos que no se ven pero que leen en voz alta los celulares de personas
+  ciegas. Si no estás segura, dejalos como están.
+- Ningún texto puede quedar vacío: si querés sacar algo, avisale a quien administra la página.
 
 > **Cuidado con el número de WhatsApp:** si está mal, los pedidos no te llegan. Formato: `549` +
 > código de área sin 0 + número sin 15. Ej: 11 1234-5678 → `5491112345678`.

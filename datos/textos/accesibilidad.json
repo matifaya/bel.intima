@@ -1,0 +1,23 @@
+{
+  "saltar": "Ir al catálogo",
+  "avisos": "Avisos de la tienda",
+  "abrirMenu": "Abrir menú",
+  "logo": "{tienda}, inicio",
+  "navPrincipal": "Principal",
+  "bolsa": "Tu pedido, {prendas}",
+  "categorias": "Categorías",
+  "filtros": "Filtrar por categoría",
+  "colores": "Colores: {colores}.",
+  "precioAntes": "Antes",
+  "galeria": "Fotos del producto, deslizá para ver más",
+  "fotoNumero": "foto {n} de {total}",
+  "cantidad": "Cantidad",
+  "cantidadDe": "Cantidad de {producto}",
+  "restar": "Restar uno",
+  "sumar": "Sumar uno",
+  "tabla": "Tabla de talles: {titulo}",
+  "cerrar": "Cerrar",
+  "cerrarPedido": "Cerrar pedido",
+  "menu": "Menú",
+  "cerrarMenu": "Cerrar menú"
+}

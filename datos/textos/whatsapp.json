@@ -1,0 +1,11 @@
+{
+  "consulta": "Hola {tienda}! Quería hacer una consulta.",
+  "consultaProducto": "Hola {tienda}! Quería consultar por el {producto}.",
+  "pedidoSaludo": "Hola {tienda}! Quiero hacer este pedido:",
+  "pedidoLinea": "• {cantidad} x {producto}: {precio}",
+  "detalleTalle": "talle {talle}",
+  "pedidoTotal": "*Total: {total}*",
+  "pedidoNombre": "Nombre: {nombre}",
+  "pedidoEntrega": "Entrega: {entrega}",
+  "pedidoPago": "Pago: {pago}"
+}

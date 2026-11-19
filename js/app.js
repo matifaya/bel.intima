@@ -79,8 +79,6 @@
       instagram: usuario(cfg.instagram, "Instagram"),
       tiktok: usuario(cfg.tiktok, "TikTok"),
       zona: texto(cfg.zona, 80),
-      heroTitulo: texto(cfg.heroTitulo, 90),
-      heroBajada: texto(cfg.heroBajada, 240),
       descuentoTransferencia: Number.isFinite(descuento) && descuento > 0 && descuento < 100 ? Math.round(descuento) : 0,
       mediosDePago: listaDeTextos(cfg.mediosDePago, 40, 10),
       entregas: entregas.length ? entregas : [{ id: "retiro", nombre: "Retiro", detalle: "", pideDireccion: false }],
@@ -118,6 +116,18 @@
         etiqueta: texto(p.etiqueta, 20)
       }];
     });
+  }
+
+  /* Textos de la página (panel → Textos de la página). tx("seccion.clave", { variable })
+     devuelve el texto como texto plano, con las {variables} reemplazadas. Siempre se
+     escapa antes de ir al HTML. scripts/preparar_publicacion.py verifica que cada clave
+     usada acá exista en datos/textos/. */
+  const TEXTOS = window.TIENDA && window.TIENDA.textos && typeof window.TIENDA.textos === "object" ? window.TIENDA.textos : {};
+  function tx(clave, vars = {}) {
+    const [seccion, nombre] = clave.split(".");
+    const crudo = TEXTOS[seccion] && typeof TEXTOS[seccion] === "object" ? TEXTOS[seccion][nombre] : "";
+    if (typeof crudo !== "string") avisar(`Falta el texto "${clave}".`);
+    return texto(crudo, 400).replace(/\{([a-z]+)\}/gi, (marca, v) => (Object.hasOwn(vars, v) ? String(vars[v]) : marca));
   }
 
   const T = validarConfig(window.TIENDA);
@@ -162,6 +172,12 @@
     const clave = Object.keys(COLORES).find((k) => n.startsWith(k));
     return clave ? COLORES[clave] : "#E9D5DF";
   }
+
+  // "Conjunto Nube (talle M, Rosa)": para los avisos y el mensaje de WhatsApp
+  const conDetalle = (nombre, talle, color) => {
+    const detalle = [talle && tx("whatsapp.detalleTalle", { talle }), color].filter(Boolean).join(", ");
+    return detalle ? `${nombre} (${detalle})` : nombre;
+  };
 
   // Aplica por JS (CSSOM) lo que antes iba en style="": así la CSP puede prohibir estilos inline
   function aplicarEstilos(raiz) {
@@ -254,16 +270,14 @@
   }
 
   function iniciarLinks() {
-    $$('[data-link="whatsapp"]').forEach((a) => (a.href = linkWhatsApp(`Hola ${T.nombre}! Quería hacer una consulta.`)));
+    $$('[data-link="whatsapp"]').forEach((a) => (a.href = linkWhatsApp(tx("whatsapp.consulta", { tienda: T.nombre }))));
     $$('[data-link="instagram"]').forEach((a) => (a.href = `https://www.instagram.com/${T.instagram}/`));
     $$('[data-link="tiktok"]').forEach((a) => (a.href = `https://www.tiktok.com/@${T.tiktok}`));
-    $$("[data-zona]").forEach((el) => (el.textContent = T.zona));
-    $$("[data-anio]").forEach((el) => (el.textContent = new Date().getFullYear()));
 
     $("[data-medios]").innerHTML = T.mediosDePago.map((m) => `<li>${escapar(m)}</li>`).join("");
     if (T.descuentoTransferencia > 0) {
       const nota = $("[data-nota-descuento]");
-      nota.textContent = `Pagando con transferencia o efectivo tenés ${T.descuentoTransferencia}% de descuento.`;
+      nota.textContent = tx("info.notaDescuento", { descuento: T.descuentoTransferencia });
       nota.hidden = false;
     }
   }
@@ -272,9 +286,6 @@
      Si un dato falta, queda el texto que ya trae index.html. */
 
   function iniciarTextos() {
-    if (T.heroTitulo) $("#hero-titulo").textContent = T.heroTitulo;
-    if (T.heroBajada) $(".hero__bajada").textContent = T.heroBajada;
-
     // Entregas: el ícono depende de si se envía (camión) o se retira (ubicación)
     const ICONO_RETIRO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg>';
     const ICONO_ENVIO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.5"/><circle cx="17" cy="17.5" r="1.5"/></svg>';
@@ -285,8 +296,8 @@
     $("[data-talles-nota]").textContent = nota;
     $("[data-talles-nota]").hidden = !nota;
     $("[data-tablas-talles]").innerHTML = tablas.map((t) => {
-      const columnas = ["Talle", ...t.columnas];
-      return `<div class="tabla-envoltura" tabindex="0" role="region" aria-label="${escapar(t.titulo ? `Tabla de talles: ${t.titulo}` : "Tabla de talles")}">
+      const columnas = [tx("info.columnaTalle"), ...t.columnas];
+      return `<div class="tabla-envoltura" tabindex="0" role="region" aria-label="${escapar(tx("accesibilidad.tabla", { titulo: t.titulo || tx("info.tallesTitulo") }))}">
         <table class="tabla">
           ${t.titulo ? `<caption>${escapar(t.titulo)}</caption>` : ""}
           <thead><tr>${columnas.map((c) => `<th scope="col">${escapar(c)}</th>`).join("")}</tr></thead>
@@ -332,13 +343,13 @@
         <span>${escapar(c.corto || c.nombre)}</span></button></li>`
     );
     const extras = [
-      ["#talles", "Talles", ICONOS.talles],
-      ["#pagos", "Pagos", ICONOS.pagos],
-      ["#preguntas", "Preguntas", ICONOS.preguntas]
-    ].map(([href, txt, icono]) => `<li><a class="destacado" href="${href}"><span class="destacado__circulo">${icono}</span><span>${txt}</span></a></li>`);
+      ["#talles", tx("catalogo.circuloTalles"), ICONOS.talles],
+      ["#pagos", tx("catalogo.circuloPagos"), ICONOS.pagos],
+      ["#preguntas", tx("catalogo.circuloPreguntas"), ICONOS.preguntas]
+    ].map(([href, txt, icono]) => `<li><a class="destacado" href="${href}"><span class="destacado__circulo">${icono}</span><span>${escapar(txt)}</span></a></li>`);
     lista.innerHTML = cats.concat(extras).join("");
 
-    $("[data-filtros]").innerHTML = [{ id: "todos", nombre: "Todo" }]
+    $("[data-filtros]").innerHTML = [{ id: "todos", nombre: tx("catalogo.filtroTodo") }]
       .concat(T.categorias)
       .map((c) => `<button class="chip" type="button" data-filtrar="${escapar(c.id)}" aria-pressed="${c.id === "todos"}">${escapar(c.nombre)}</button>`)
       .join("");
@@ -374,9 +385,9 @@
     const colores = (p.colores || []);
     const muestras = colores.length
       ? `<span class="muestras" aria-hidden="true">${colores.slice(0, 5).map((c) => `<span class="muestra" data-color="${escapar(c)}"></span>`).join("")}</span>
-         <span class="solo-lector">Colores: ${escapar(colores.join(", "))}.</span>`
+         <span class="solo-lector">${escapar(tx("accesibilidad.colores", { colores: colores.join(", ") }))}</span>`
       : "<span></span>";
-    const talles = (p.talles || []).length ? `<span class="tarjeta__talles">${escapar(p.talles[0])} al ${escapar(p.talles[p.talles.length - 1])}</span>` : "";
+    const talles = (p.talles || []).length ? `<span class="tarjeta__talles">${escapar(tx("catalogo.rangoTalles", { desde: p.talles[0], hasta: p.talles[p.talles.length - 1] }))}</span>` : "";
     return `<li class="tarjeta" data-cat="${escapar(p.categoria)}" data-i="${i}">
       <div class="tarjeta__media">${etiqueta}${media(p, { conSegunda: true })}</div>
       <div class="tarjeta__info">
@@ -389,10 +400,14 @@
   }
 
   function bloquePrecio(p) {
-    const antes = p.precioAntes ? `<s class="precio__antes"><span class="solo-lector">Antes </span>${precio(p.precioAntes)}</s>` : "";
-    const transf = T.descuentoTransferencia > 0
-      ? `<span class="precio__transferencia">${precio(conDescuento(p.precio))} con transferencia</span>` : "";
-    return `<p class="precio"><span class="precio__actual">${precio(p.precio)}</span>${antes}${transf}</p>`;
+    const antes = p.precioAntes ? `<s class="precio__antes"><span class="solo-lector">${escapar(tx("accesibilidad.precioAntes"))} </span>${precio(p.precioAntes)}</s>` : "";
+    // Con descuento por transferencia: "$25.000 con Mercado Pago o tarjeta" y abajo
+    // "$22.500 con transferencia o efectivo" (los dos textos se editan en el panel)
+    const hayDescuento = T.descuentoTransferencia > 0;
+    const nota = hayDescuento ? `<span class="precio__nota">${escapar(tx("catalogo.precioNota"))}</span>` : "";
+    const transf = hayDescuento
+      ? `<span class="precio__transferencia">${escapar(tx("catalogo.precioTransferencia", { precio: precio(conDescuento(p.precio)) }))}</span>` : "";
+    return `<p class="precio"><span class="precio__actual">${precio(p.precio)}</span>${antes}${nota}${transf}</p>`;
   }
 
   function renderGrilla(animar = false) {
@@ -402,7 +417,7 @@
     aplicarEstilos(grilla);
     if (animar && !movimientoReducido) $$(".tarjeta", grilla).forEach((t) => t.classList.add("entra"));
     $("[data-vacia]").hidden = lista.length > 0;
-    $("[data-cantidad]").textContent = `${lista.length} ${lista.length === 1 ? "producto" : "productos"}`;
+    $("[data-cantidad]").textContent = tx(lista.length === 1 ? "catalogo.cantidadUno" : "catalogo.cantidadVarios", { n: lista.length });
   }
 
   /* ---------- diálogos ---------- */
@@ -451,7 +466,7 @@
     const fotos = p.fotos && p.fotos.length ? p.fotos : [null];
     const galeria = fotos
       .map((f, i) => (f
-        ? `<img src="${escapar(f)}" alt="${escapar(p.nombre)}${fotos.length > 1 ? `, foto ${i + 1} de ${fotos.length}` : ""}" width="800" height="1000" ${i ? 'loading="lazy"' : ""}>`
+        ? `<img src="${escapar(f)}" alt="${escapar(p.nombre)}${fotos.length > 1 ? `, ${escapar(tx("accesibilidad.fotoNumero", { n: i + 1, total: fotos.length }))}` : ""}" width="800" height="1000" ${i ? 'loading="lazy"' : ""}>`
         : media(p)))
       .join("");
     const puntos = fotos.length > 1 ? `<div class="ficha__puntos" aria-hidden="true">${fotos.map((_, i) => `<span class="${i ? "" : "activo"}"></span>`).join("")}</div>` : "";
@@ -460,18 +475,18 @@
       if (!opciones || !opciones.length) return "";
       const unica = opciones.length === 1;
       return `<fieldset class="selector" data-selector="${nombre}">
-        <legend><span>${titulo}</span>${extra}</legend>
+        <legend><span>${escapar(titulo)}</span>${extra}</legend>
         <div class="selector__opciones">
           ${opciones.map((o) => `<label class="opcion"><input type="radio" name="${nombre}" value="${escapar(o)}" ${unica ? "checked" : ""}>
             <span>${conMuestra ? `<i class="muestra" data-color="${escapar(o)}" aria-hidden="true"></i>` : ""}${escapar(o)}</span></label>`).join("")}
         </div>
-        <p class="selector__error" id="error-${nombre}" hidden>Elegí ${nombre === "talle" ? "un talle" : "un color"} para sumarlo.</p>
+        <p class="selector__error" id="error-${nombre}" hidden>${escapar(nombre === "talle" ? tx("ficha.errorTalle") : tx("ficha.errorColor"))}</p>
       </fieldset>`;
     };
 
     $("[data-ficha]").innerHTML = `
       <div class="ficha__media">
-        <div class="ficha__galeria" ${fotos.length > 1 ? 'tabindex="0" aria-label="Fotos del producto, deslizá para ver más"' : ""}>${galeria}</div>
+        <div class="ficha__galeria" ${fotos.length > 1 ? `tabindex="0" aria-label="${escapar(tx("accesibilidad.galeria"))}"` : ""}>${galeria}</div>
         ${puntos}
       </div>
       <div class="ficha__lado">
@@ -482,24 +497,24 @@
           </div>
           ${bloquePrecio(p)}
           ${p.descripcion ? `<p class="ficha__desc">${escapar(p.descripcion)}</p>` : ""}
-          ${grupo("talle", "Talle", p.talles, '<a href="#talles" data-salir>Guía de talles</a>')}
-          ${grupo("color", "Color", p.colores, "", true)}
+          ${grupo("talle", tx("ficha.talle"), p.talles, `<a href="#talles" data-salir>${escapar(tx("ficha.linkGuia"))}</a>`)}
+          ${grupo("color", tx("ficha.color"), p.colores, "", true)}
         </div>
         <div class="ficha__comprar">
-          <div class="cantidad" role="group" aria-label="Cantidad">
-            <button type="button" data-cant="-1" aria-label="Restar uno" disabled>${ICONO_MENOS}</button>
+          <div class="cantidad" role="group" aria-label="${escapar(tx("accesibilidad.cantidad"))}">
+            <button type="button" data-cant="-1" aria-label="${escapar(tx("accesibilidad.restar"))}" disabled>${ICONO_MENOS}</button>
             <output data-cant-valor aria-live="polite">1</output>
-            <button type="button" data-cant="1" aria-label="Sumar uno">${ICONO_MAS}</button>
+            <button type="button" data-cant="1" aria-label="${escapar(tx("accesibilidad.sumar"))}">${ICONO_MAS}</button>
           </div>
-          <button class="btn btn--principal" type="button" data-agregar>Agregar al pedido</button>
+          <button class="btn btn--principal" type="button" data-agregar>${escapar(tx("ficha.agregar"))}</button>
         </div>
         <div class="ficha__extra">
           <button class="link-btn" type="button" data-compartir>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12a3 3 0 1 1 0-.01M15 6.5 9.8 10.5M15 17.5l-5.2-4M18 6.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0ZM18 17.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"/></svg>
-            Compartir
+            ${escapar(tx("ficha.compartir"))}
           </button>
-          <a class="link-btn" target="_blank" rel="noopener noreferrer" href="${escapar(linkWhatsApp(`Hola ${T.nombre}! Quería consultar por el ${p.nombre}.`))}">
-            Consultar por WhatsApp
+          <a class="link-btn" target="_blank" rel="noopener noreferrer" href="${escapar(linkWhatsApp(tx("whatsapp.consultaProducto", { tienda: T.nombre, producto: p.nombre })))}">
+            ${escapar(tx("ficha.consultar"))}
           </a>
         </div>
       </div>`;
@@ -543,15 +558,14 @@
       }
       agregar(p, talle, color, cantidad);
       cerrarProducto();
-      const detalle = [talle && `talle ${talle}`, color].filter(Boolean).join(", ");
-      mostrarTostada(`Agregado al pedido: ${p.nombre}${detalle ? ` (${detalle})` : ""}`);
+      mostrarTostada(tx("ficha.agregado", { producto: conDetalle(p.nombre, talle, color) }));
     });
 
     $("[data-compartir]", ficha).addEventListener("click", async () => {
       const url = `${location.origin}${location.pathname}#producto=${encodeURIComponent(p.id)}`;
       try {
-        if (navigator.share) await navigator.share({ title: p.nombre, text: `${p.nombre} en Bel Intimma`, url });
-        else { await navigator.clipboard.writeText(url); mostrarTostada("Link copiado", false); }
+        if (navigator.share) await navigator.share({ title: p.nombre, text: tx("ficha.compartirTexto", { producto: p.nombre, tienda: T.nombre }), url });
+        else { await navigator.clipboard.writeText(url); mostrarTostada(tx("ficha.linkCopiado"), false); }
       } catch { /* la persona canceló */ }
     });
 
@@ -655,12 +669,13 @@
     const cuenta = $("[data-cuenta]");
     cuenta.textContent = n;
     cuenta.classList.toggle("tiene", n > 0);
-    $(".bolsa").setAttribute("aria-label", `Tu pedido, ${n} ${n === 1 ? "prenda" : "prendas"}`);
+    const prendas = tx(n === 1 ? "pedido.prendaUna" : "pedido.prendasVarias", { n });
+    $(".bolsa").setAttribute("aria-label", tx("accesibilidad.bolsa", { prendas }));
 
     const barra = $("[data-barra]");
     barra.hidden = n === 0;
     document.body.classList.toggle("con-barra", n > 0);
-    $("[data-barra-cantidad]").textContent = `${n} ${n === 1 ? "prenda" : "prendas"}`;
+    $("[data-barra-cantidad]").textContent = prendas;
     $("[data-barra-total]").textContent = precio(total());
 
     $("[data-pedido-vacio]").hidden = n > 0;
@@ -669,25 +684,25 @@
 
     const notaTotal = $("[data-total-nota]");
     if (T.descuentoTransferencia > 0 && n > 0) {
-      notaTotal.textContent = `Con transferencia o efectivo: ${precio(conDescuento(total()))}`;
+      notaTotal.textContent = tx("pedido.totalDescuento", { precio: precio(conDescuento(total())) });
       notaTotal.hidden = false;
     } else notaTotal.hidden = true;
 
     $("[data-items]").innerHTML = estado.carrito.map((i) => {
       const p = productoDe(i);
-      const detalle = [i.talle && `Talle ${i.talle}`, i.color].filter(Boolean).join(", ");
+      const detalle = [i.talle && tx("pedido.itemTalle", { talle: i.talle }), i.color].filter(Boolean).join(", ");
       return `<li class="item" data-clave="${escapar(i.clave)}">
         <div class="item__img">${media(p)}</div>
         <div>
           <p class="item__nombre">${escapar(p.nombre)}</p>
           <p class="item__detalle">${escapar(detalle)}</p>
           <div class="item__acciones">
-            <div class="cantidad cantidad--chica" role="group" aria-label="Cantidad de ${escapar(p.nombre)}">
-              <button type="button" data-item-cant="-1" aria-label="Restar uno">${ICONO_MENOS}</button>
+            <div class="cantidad cantidad--chica" role="group" aria-label="${escapar(tx("accesibilidad.cantidadDe", { producto: p.nombre }))}">
+              <button type="button" data-item-cant="-1" aria-label="${escapar(tx("accesibilidad.restar"))}">${ICONO_MENOS}</button>
               <output aria-live="polite">${i.cantidad}</output>
-              <button type="button" data-item-cant="1" aria-label="Sumar uno" ${i.cantidad >= 20 ? "disabled" : ""}>${ICONO_MAS}</button>
+              <button type="button" data-item-cant="1" aria-label="${escapar(tx("accesibilidad.sumar"))}" ${i.cantidad >= 20 ? "disabled" : ""}>${ICONO_MAS}</button>
             </div>
-            <button class="link-btn item__quitar" type="button" data-quitar>Quitar</button>
+            <button class="link-btn item__quitar" type="button" data-quitar>${escapar(tx("pedido.quitar"))}</button>
           </div>
         </div>
         <p class="item__precio">${precio(p.precio * i.cantidad)}</p>
@@ -710,7 +725,7 @@
         const posicion = estado.carrito.indexOf(item);
         estado.carrito = estado.carrito.filter((i) => i !== item);
         ultimoQuitado = { item, posicion };
-        mostrarTostada(`Quitaste ${productoDe(item).nombre}`, "deshacer");
+        mostrarTostada(tx("pedido.quitado", { producto: productoDe(item).nombre }), "deshacer");
       } else if (b.dataset.itemCant) {
         item.cantidad += Number(b.dataset.itemCant);
         if (item.cantidad <= 0) estado.carrito = estado.carrito.filter((i) => i !== item);
@@ -759,7 +774,7 @@
         return;
       }
       if (!whatsappConfigurado()) {
-        mostrarTostada("Falta cargar el número de WhatsApp en el panel", false);
+        mostrarTostada(tx("pedido.faltaWhatsapp"), false);
         return;
       }
       // Evita abrir WhatsApp varias veces por un doble toque
@@ -777,19 +792,18 @@
 
       const lineas = estado.carrito.map((i) => {
         const p = productoDe(i);
-        const detalle = [i.talle && `talle ${i.talle}`, i.color].filter(Boolean).join(", ");
-        return `• ${i.cantidad} x ${p.nombre}${detalle ? ` (${detalle})` : ""}: ${precio(p.precio * i.cantidad)}`;
+        return tx("whatsapp.pedidoLinea", { cantidad: i.cantidad, producto: conDetalle(p.nombre, i.talle, i.color), precio: precio(p.precio * i.cantidad) });
       });
       const msg = [
-        `Hola ${T.nombre}! Quiero hacer este pedido:`,
+        tx("whatsapp.pedidoSaludo", { tienda: T.nombre }),
         "",
         ...lineas,
         "",
-        `*Total: ${precio(total())}*`,
+        tx("whatsapp.pedidoTotal", { total: precio(total()) }),
         "",
-        `Nombre: ${nombreLimpio}`,
-        `Entrega: ${entrega.nombre}${zona ? ` (${zona})` : ""}`,
-        pago ? `Pago: ${pago}` : ""
+        tx("whatsapp.pedidoNombre", { nombre: nombreLimpio }),
+        tx("whatsapp.pedidoEntrega", { entrega: `${entrega.nombre}${zona ? ` (${zona})` : ""}` }),
+        pago ? tx("whatsapp.pedidoPago", { pago }) : ""
       ].filter((l, n, arr) => l !== "" || arr[n - 1] !== "").join("\n");
 
       // linkWhatsApp codifica todo el texto con encodeURIComponent
@@ -813,8 +827,8 @@
   function mostrarTostada(texto, accion = true) {
     const t = $("[data-tostada]");
     const boton = accion === "deshacer"
-      ? '<button type="button" data-deshacer>Deshacer</button>'
-      : accion ? '<button type="button" data-abrir="pedido">Ver pedido</button>' : "";
+      ? `<button type="button" data-deshacer>${escapar(tx("pedido.deshacer"))}</button>`
+      : accion ? `<button type="button" data-abrir="pedido">${escapar(tx("ficha.verPedido"))}</button>` : "";
     // Un diálogo modal deja inerte todo lo de afuera: el aviso tiene que vivir adentro
     const contenedor = $("dialog[open]") || document.body;
     if (t.parentElement !== contenedor) contenedor.appendChild(t);

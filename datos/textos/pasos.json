@@ -1,0 +1,17 @@
+{
+  "titulo": "Cómo comprar",
+  "lista": [
+    {
+      "titulo": "Elegí tus prendas",
+      "texto": "Tocá un producto, elegí talle y color, y sumalo a tu pedido. Podés agregar todo lo que quieras."
+    },
+    {
+      "titulo": "Mandá el pedido por WhatsApp",
+      "texto": "Con un toque se arma el mensaje con tus prendas, talles y el total. No tenés que copiar nada."
+    },
+    {
+      "titulo": "Coordinamos pago y entrega",
+      "texto": "Te confirmamos el stock, pagás con el medio que prefieras y retirás o te lo enviamos."
+    }
+  ]
+}

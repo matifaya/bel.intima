@@ -12,8 +12,10 @@ Qué hace:
      Si encuentra una, frena: no se publica nada hasta limpiarla con
          python3 scripts/limpiar_fotos.py
   2. Junta los datos que se editan desde el panel (carpeta datos/: productos,
-     categorías, contacto, talles, preguntas) en un solo archivo, js/datos.js.
-  3. Copia la lista blanca de archivos de la página y el panel ya compilado
+     categorías, contacto, talles, preguntas, textos) en un solo archivo, js/datos.js.
+  3. Escribe en index.html los textos de la página (los {{seccion.clave}}), así se
+     ven bien desde el primer momento y en Google. Si falta alguno, frena.
+  4. Copia la lista blanca de archivos de la página y el panel ya compilado
      (panel/dist/ -> admin/).
 
 Para ver la página en tu compu:
@@ -23,12 +25,14 @@ Para ver la página en tu compu:
 No necesita instalar nada (solo Python 3).
 """
 
+import html
 import json
 import re
 import shutil
 import struct
 import sys
 import unicodedata
+from datetime import date
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -168,6 +172,58 @@ def ruta_foto(valor) -> str:
     return str(valor or "").lstrip("/")
 
 
+def leer_textos() -> dict:
+    """datos/textos/inicio.json -> {"inicio": {...}}; un archivo por sección del panel."""
+    return {ruta.stem: leer_json(ruta, {}) for ruta in sorted((DATOS / "textos").glob("*.json"))}
+
+
+def limpiar_texto(valor) -> str:
+    # Igual que texto() en js/app.js: sin caracteres de control y espacios colapsados
+    return re.sub(r"\s+", " ", re.sub(r"[\x00-\x1f\x7f-\x9f\u2028\u2029]", " ", str(valor))).strip()[:400]
+
+
+CLAVE = re.compile(r"\{\{([a-z]+)\.([A-Za-z]+)\}\}")
+
+
+def revisar_textos(textos: dict) -> list[str]:
+    """Cada texto que usan index.html y js/app.js tiene que existir en datos/textos/."""
+    usadas = set(CLAVE.findall((RAIZ / "index.html").read_text(encoding="utf-8")))
+    app = (RAIZ / "js" / "app.js").read_text(encoding="utf-8")
+    usadas |= {(s, k) for s, k in re.findall(r'"([a-z]+)\.([A-Za-z]+)"', app) if s in textos}
+    faltan = [f"{s}.{k}" for s, k in sorted(usadas) if not isinstance(textos.get(s, {}).get(k), str)]
+    pasos = textos.get("pasos", {}).get("lista")
+    if not isinstance(pasos, list):
+        faltan.append("pasos.lista")
+    return faltan
+
+
+def renderizar_index(tienda: dict, textos: dict) -> str:
+    variables = {
+        "tienda": str(tienda.get("nombre") or "Bel Intimma"),
+        "zona": str(tienda.get("zona") or ""),
+        "año": str(date.today().year),
+    }
+
+    def escapar(valor) -> str:
+        texto = html.escape(limpiar_texto(valor), quote=True)
+        # Las {variables} se reemplazan después de escapar, con su valor también escapado
+        return re.sub(r"\{(tienda|zona|año)\}", lambda m: html.escape(variables[m.group(1)], quote=True), texto)
+
+    pagina = (RAIZ / "index.html").read_text(encoding="utf-8")
+    pagina = CLAVE.sub(lambda m: escapar(textos[m.group(1)][m.group(2)]), pagina)
+
+    avisos = [a for a in tienda.get("avisos") or [] if isinstance(a, str) and a.strip()]
+    pagina = pagina.replace("{{@aviso}}", escapar(avisos[0]) if avisos else "")
+
+    pasos = [x for x in textos["pasos"]["lista"] if isinstance(x, dict) and str(x.get("titulo", "")).strip()]
+    pagina = pagina.replace("{{@pasos}}", "\n".join(
+        f"            <li>\n              <h3>{escapar(x.get('titulo', ''))}</h3>\n"
+        f"              <p>{escapar(x.get('texto', ''))}</p>\n            </li>" for x in pasos[:8]))
+    if "{{" in pagina:
+        raise ValueError("quedó un {{...}} sin reemplazar en index.html")
+    return pagina
+
+
 def armar_datos() -> str:
     tienda = leer_json(DATOS / "tienda.json", {})
     tienda["categorias"] = [
@@ -177,6 +233,7 @@ def armar_datos() -> str:
     talles = leer_json(DATOS / "talles.json", {})
     tienda["talles"] = {"nota": talles.get("nota"), "tablas": talles.get("tablas")}
     tienda["preguntas"] = leer_json(DATOS / "preguntas.json", {}).get("preguntas")
+    tienda["textos"] = leer_textos()
 
     productos = []
     for ident, d in leer_carpeta("productos"):
@@ -220,6 +277,15 @@ def main() -> int:
         return 1
     print("Juntando los datos del panel...")
     datos_js = armar_datos()
+    tienda = leer_json(DATOS / "tienda.json", {})
+    textos = leer_textos()
+    faltan = revisar_textos(textos)
+    if faltan:
+        print("\nFaltan textos en datos/textos/ (agregalos en el panel o en el archivo):")
+        for clave in faltan:
+            print(f"  ✗ {clave}")
+        return 1
+    pagina = renderizar_index(tienda, textos)
 
     if DESTINO.exists():
         shutil.rmtree(DESTINO)
@@ -238,6 +304,7 @@ def main() -> int:
                 copiados += 1
 
     (DESTINO / "js" / "datos.js").write_text(datos_js, encoding="utf-8")
+    (DESTINO / "index.html").write_text(pagina, encoding="utf-8")
     copiados += 1
 
     if (PANEL / "index.html").is_file():

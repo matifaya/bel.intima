@@ -580,6 +580,7 @@ svg[viewBox="0 0 24 24"] {
 .precio { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px var(--e-2); font-variant-numeric: tabular-nums; }
 .precio__actual { font-weight: 600; font-size: var(--t-m); }
 .precio__antes { color: var(--malva); font-size: var(--t-s); text-decoration: line-through; }
+.precio__nota { color: var(--malva); font-size: var(--t-xs); line-height: 1.3; }
 .precio__transferencia { flex-basis: 100%; color: var(--malva); font-size: var(--t-xs); }
 
 .tarjeta__pie { display: flex; align-items: center; justify-content: space-between; gap: var(--e-2); }

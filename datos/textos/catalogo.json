@@ -1,0 +1,13 @@
+{
+  "circuloTalles": "Talles",
+  "circuloPagos": "Pagos",
+  "circuloPreguntas": "Preguntas",
+  "titulo": "Catálogo",
+  "filtroTodo": "Todo",
+  "cantidadUno": "{n} producto",
+  "cantidadVarios": "{n} productos",
+  "rangoTalles": "{desde} al {hasta}",
+  "precioNota": "con Mercado Pago o tarjeta",
+  "precioTransferencia": "{precio} con transferencia o efectivo",
+  "vacio": "Todavía no hay productos en esta categoría. Escribinos por WhatsApp y te contamos qué llega."
+}

@@ -16,8 +16,9 @@ js/seda.js, js/vendor/          Fondo 3D de seda del inicio (Three.js alojado en
 datos/                          ← Lo que se edita desde el panel (archivos JSON)
   productos/*.json                un archivo por producto
   categorias/*.json               un archivo por categoría
-  tienda.json                     WhatsApp, redes, textos del inicio, pagos, entregas, avisos
+  tienda.json                     WhatsApp, redes, zona, pagos, entregas, avisos
   talles.json, preguntas.json     guía de talles y preguntas frecuentes
+  textos/*.json                   todos los textos de la página, un archivo por sección
 img/productos/                  ← Fotos de los productos (las sube el panel)
 panel/                          Panel de administración (Sveltia CMS) y su configuración
   public/config.yml               ← Qué campos tiene el panel y cómo se guardan
@@ -93,12 +94,24 @@ Ver [`GUIA-PANEL.md`](GUIA-PANEL.md). Resumen:
 |---|---|
 | **Productos** | Catálogo: nombre, categoría, precio, precio anterior (tachado), fotos, talles, colores, descripción, etiqueta, mostrar/ocultar. Se arrastran para cambiar el orden. |
 | **Categorías** | Filtros y círculos de arriba. Nombre, nombre corto y dibujo. |
-| **Datos de la tienda → Contacto, pagos y entregas** | WhatsApp, Instagram, TikTok, zona, título y texto del inicio, avisos de la franja, descuento, medios de pago, formas de entrega. |
+| **Datos de la tienda → Contacto, pagos y entregas** | WhatsApp, Instagram, TikTok, zona, avisos de la franja, descuento, medios de pago, formas de entrega. |
 | **Datos de la tienda → Guía de talles** | Las tablas de talles. |
 | **Datos de la tienda → Preguntas frecuentes** | Las preguntas y respuestas. Sin preguntas, la sección no se muestra. |
+| **Textos de la página** | **Todos** los demás textos, por sección: inicio, encabezado y menú, catálogo, ficha de producto, cómo comprar, títulos, redes y pie, pedido, mensajes de WhatsApp, título y descripción para Google y links compartidos, y los textos para lectores de pantalla. |
 
-Lo que no está en el panel (diseño, colores, "Cómo comprar", textos de redes) se cambia en
-`index.html` y `css/`.
+En la página no queda ningún texto fijo en el código. Lo único que se cambia en `index.html` y
+`css/` es el diseño (colores, tipografías, ilustraciones).
+
+### Cómo funcionan los textos
+
+- `index.html` tiene marcas como `{{inicio.titulo}}` (archivo `datos/textos/inicio.json`, clave
+  `titulo`). Al publicar, `scripts/preparar_publicacion.py` las reemplaza por el texto, escapado.
+  Así los textos ya están en el HTML: se ven desde el primer momento y Google los lee.
+- `js/app.js` usa `tx("pedido.quitar")` para los textos que arma en el momento (avisos, cantidades,
+  mensaje de WhatsApp). Las `{variables}`, como `{producto}` o `{n}`, se completan ahí.
+- **Si falta un texto, la publicación se frena** y dice cuál (la página sigue con la versión anterior).
+- **Para agregar un texto nuevo:** sumalo al `.json` de su sección, al bloque `textos` de
+  `panel/public/config.yml` y usalo con `{{seccion.clave}}` o `tx("seccion.clave")`.
 
 ---
 

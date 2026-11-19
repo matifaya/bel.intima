@@ -3,17 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- Las marcas con llaves dobles (seccion.clave) son textos que se editan desde el panel
+       (datos/textos/). scripts/preparar_publicacion.py las reemplaza al publicar. -->
   <!-- Seguridad. En Netlify las mismas reglas (y más) llegan como headers desde el archivo _headers.
        Esta copia en <meta> es una segunda capa (y la que se aplica al probar con un servidor local). -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <title>Bel Intimma · Ropa interior y pijamas en Gral. San Martín</title>
-  <meta name="description" content="Conjuntos con y sin aro y pijamas. Elegí tus prendas, armá tu pedido y mandalo por WhatsApp. Retiro en Gral. San Martín y envíos.">
+  <title>{{google.titulo}}</title>
+  <meta name="description" content="{{google.descripcion}}">
   <meta name="theme-color" content="#4A2A3A">
 
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Bel Intimma · Ropa interior y pijamas">
-  <meta property="og:description" content="Conjuntos con y sin aro y pijamas. Pedí por WhatsApp.">
+  <meta property="og:title" content="{{google.compartirTitulo}}">
+  <meta property="og:description" content="{{google.compartirDescripcion}}">
   <meta property="og:locale" content="es_AR">
 
   <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
@@ -26,32 +28,32 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <a class="saltar" href="#catalogo">Ir al catálogo</a>
+  <a class="saltar" href="#catalogo">{{accesibilidad.saltar}}</a>
 
   <!-- Franja de avisos -->
-  <div class="aviso" role="region" aria-label="Avisos de la tienda">
-    <p class="aviso__texto" data-avisos>Aceptamos todos los medios de pago</p>
+  <div class="aviso" role="region" aria-label="{{accesibilidad.avisos}}">
+    <p class="aviso__texto" data-avisos>{{@aviso}}</p>
   </div>
 
   <!-- Encabezado -->
   <header class="cabecera" data-cabecera>
     <div class="cabecera__fila contenedor">
-      <button class="icono-btn cabecera__menu" type="button" data-abrir="menu" aria-label="Abrir menú" aria-haspopup="dialog">
+      <button class="icono-btn cabecera__menu" type="button" data-abrir="menu" aria-label="{{accesibilidad.abrirMenu}}" aria-haspopup="dialog">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
       </button>
 
-      <a class="logotipo" translate="no" href="#inicio" aria-label="Bel Intimma, inicio">bel.intimma</a>
+      <a class="logotipo" translate="no" href="#inicio" aria-label="{{accesibilidad.logo}}">{{encabezado.logo}}</a>
 
-      <nav class="cabecera__nav" aria-label="Principal">
-        <a href="#catalogo">Catálogo</a>
-        <a href="#como-comprar">Cómo comprar</a>
-        <a href="#talles">Talles</a>
-        <a href="#preguntas">Preguntas</a>
+      <nav class="cabecera__nav" aria-label="{{accesibilidad.navPrincipal}}">
+        <a href="#catalogo">{{encabezado.linkCatalogo}}</a>
+        <a href="#como-comprar">{{encabezado.linkComoComprar}}</a>
+        <a href="#talles">{{encabezado.linkTalles}}</a>
+        <a href="#preguntas">{{encabezado.linkPreguntas}}</a>
       </nav>
 
       <button class="bolsa" type="button" data-abrir="pedido" aria-haspopup="dialog">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8V7a3 3 0 0 1 6 0v1"/></svg>
-        <span class="bolsa__texto">Tu pedido</span>
+        <span class="bolsa__texto">{{encabezado.botonPedido}}</span>
         <span class="bolsa__cuenta" data-cuenta aria-live="polite">0</span>
       </button>
     </div>
@@ -62,11 +64,11 @@
     <section class="hero" data-seda aria-labelledby="hero-titulo">
       <div class="hero__grilla contenedor">
         <div class="hero__texto">
-          <h1 id="hero-titulo" class="hero__titulo">Lencería y pijamas para sentirte linda todos los días</h1>
-          <p class="hero__bajada">Conjuntos con y sin aro y pijamas suaves, elegidos uno por uno en Gral. San Martín. Armás tu pedido acá y lo confirmamos por WhatsApp.</p>
+          <h1 id="hero-titulo" class="hero__titulo">{{inicio.titulo}}</h1>
+          <p class="hero__bajada">{{inicio.bajada}}</p>
           <div class="hero__acciones">
-            <a class="btn btn--principal" href="#catalogo">Ver el catálogo</a>
-            <a class="btn btn--suave" href="#como-comprar">Cómo comprar</a>
+            <a class="btn btn--principal" href="#catalogo">{{inicio.botonCatalogo}}</a>
+            <a class="btn btn--suave" href="#como-comprar">{{inicio.botonComoComprar}}</a>
           </div>
         </div>
 
@@ -78,21 +80,21 @@
     <div class="feston" aria-hidden="true"></div>
 
     <!-- Categorías, como los destacados de Instagram -->
-    <nav class="destacados contenedor" aria-label="Categorías">
+    <nav class="destacados contenedor" aria-label="{{accesibilidad.categorias}}">
       <ul class="destacados__lista" data-destacados></ul>
     </nav>
 
     <!-- Catálogo -->
     <section id="catalogo" class="catalogo contenedor" aria-labelledby="catalogo-titulo">
       <div class="catalogo__cabeza">
-        <h2 id="catalogo-titulo" class="titulo-seccion">Catálogo</h2>
+        <h2 id="catalogo-titulo" class="titulo-seccion">{{catalogo.titulo}}</h2>
         <p class="catalogo__cantidad" data-cantidad aria-live="polite"></p>
       </div>
 
-      <div class="filtros" role="group" aria-label="Filtrar por categoría" data-filtros></div>
+      <div class="filtros" role="group" aria-label="{{accesibilidad.filtros}}" data-filtros></div>
 
       <ul class="grilla" data-grilla></ul>
-      <p class="grilla__vacia" data-vacia hidden>Todavía no hay productos en esta categoría. Escribinos por WhatsApp y te contamos qué llega.</p>
+      <p class="grilla__vacia" data-vacia hidden>{{catalogo.vacio}}</p>
     </section>
 
     <!-- Cómo comprar: es una secuencia real, por eso va numerada -->
@@ -100,20 +102,9 @@
       <div class="feston feston--arriba" aria-hidden="true"></div>
       <div class="pasos__cuerpo">
         <div class="contenedor">
-          <h2 id="pasos-titulo" class="titulo-seccion">Cómo comprar</h2>
+          <h2 id="pasos-titulo" class="titulo-seccion">{{pasos.titulo}}</h2>
           <ol class="pasos__lista">
-            <li>
-              <h3>Elegí tus prendas</h3>
-              <p>Tocá un producto, elegí talle y color, y sumalo a tu pedido. Podés agregar todo lo que quieras.</p>
-            </li>
-            <li>
-              <h3>Mandá el pedido por WhatsApp</h3>
-              <p>Con un toque se arma el mensaje con tus prendas, talles y el total. No tenés que copiar nada.</p>
-            </li>
-            <li>
-              <h3>Coordinamos pago y entrega</h3>
-              <p>Te confirmamos el stock, pagás con el medio que prefieras y retirás o te lo enviamos.</p>
-            </li>
+{{@pasos}}
           </ol>
         </div>
       </div>
@@ -123,26 +114,26 @@
     <!-- Talles + pagos y envíos -->
     <div class="info contenedor">
       <section id="talles" class="info__bloque" aria-labelledby="talles-titulo">
-        <h2 id="talles-titulo" class="titulo-seccion">Guía de talles</h2>
+        <h2 id="talles-titulo" class="titulo-seccion">{{info.tallesTitulo}}</h2>
         <p class="info__nota" data-talles-nota hidden></p>
         <div data-tablas-talles></div>
       </section>
 
       <section id="pagos" class="info__bloque info__bloque--tarjeta" aria-labelledby="pagos-titulo">
-        <h2 id="pagos-titulo" class="titulo-seccion">Pagos y entregas</h2>
+        <h2 id="pagos-titulo" class="titulo-seccion">{{info.pagosTitulo}}</h2>
 
-        <h3 class="info__sub">Medios de pago</h3>
+        <h3 class="info__sub">{{info.mediosTitulo}}</h3>
         <ul class="medios" data-medios></ul>
         <p class="info__nota" data-nota-descuento hidden></p>
 
-        <h3 class="info__sub">Entregas</h3>
+        <h3 class="info__sub">{{info.entregasTitulo}}</h3>
         <ul class="entregas" data-entregas></ul>
       </section>
     </div>
 
     <!-- Preguntas frecuentes -->
     <section id="preguntas" class="preguntas contenedor" aria-labelledby="preguntas-titulo">
-      <h2 id="preguntas-titulo" class="titulo-seccion">Preguntas frecuentes</h2>
+      <h2 id="preguntas-titulo" class="titulo-seccion">{{info.preguntasTitulo}}</h2>
 
       <div class="acordeon" data-preguntas></div>
     </section>
@@ -153,17 +144,17 @@
       <div class="redes__cuerpo">
         <div class="contenedor redes__fila">
           <div>
-            <h2 id="redes-titulo" class="titulo-seccion">Lo nuevo sale primero en las historias</h2>
-            <p>Ingresos, reposiciones y combinaciones las mostramos en Instagram y TikTok.</p>
+            <h2 id="redes-titulo" class="titulo-seccion">{{redes.titulo}}</h2>
+            <p>{{redes.texto}}</p>
           </div>
           <div class="redes__botones">
             <a class="btn btn--principal" data-link="instagram" href="https://www.instagram.com/bel.intimma/" target="_blank" rel="noopener noreferrer">
               <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".6" fill="currentColor"/></svg>
-              Seguinos en Instagram
+              {{redes.botonInstagram}}
             </a>
             <a class="btn btn--contorno" data-link="tiktok" href="https://www.tiktok.com/@bel.intimma" target="_blank" rel="noopener noreferrer">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5"/><path d="M14 3c.4 2.6 2.2 4.4 5 4.6"/></svg>
-              Ver en TikTok
+              {{redes.botonTiktok}}
             </a>
           </div>
         </div>
@@ -173,14 +164,14 @@
 
   <footer class="pie">
     <div class="contenedor pie__fila">
-      <p class="logotipo logotipo--pie" translate="no">bel.intimma</p>
-      <p class="pie__dato">Ropa interior y pijamas desde <span data-zona>Gral. San Martín, Buenos Aires</span>.</p>
+      <p class="logotipo logotipo--pie" translate="no">{{redes.pieLogo}}</p>
+      <p class="pie__dato">{{redes.pieDato}}</p>
       <ul class="pie__links">
-        <li><a data-link="whatsapp" href="#" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
-        <li><a data-link="instagram" href="https://www.instagram.com/bel.intimma/" target="_blank" rel="noopener noreferrer">Instagram</a></li>
-        <li><a data-link="tiktok" href="https://www.tiktok.com/@bel.intimma" target="_blank" rel="noopener noreferrer">TikTok</a></li>
+        <li><a data-link="whatsapp" href="#" target="_blank" rel="noopener noreferrer">{{redes.pieWhatsapp}}</a></li>
+        <li><a data-link="instagram" href="https://www.instagram.com/bel.intimma/" target="_blank" rel="noopener noreferrer">{{redes.pieInstagram}}</a></li>
+        <li><a data-link="tiktok" href="https://www.tiktok.com/@bel.intimma" target="_blank" rel="noopener noreferrer">{{redes.pieTiktok}}</a></li>
       </ul>
-      <p class="pie__chico">© <span data-anio>2026</span> Bel Intimma</p>
+      <p class="pie__chico">{{redes.pieDerechos}}</p>
     </div>
   </footer>
 
@@ -190,7 +181,7 @@
       <span data-barra-cantidad></span>
       <strong data-barra-total></strong>
     </div>
-    <button class="btn btn--principal" type="button" data-abrir="pedido">Ver mi pedido</button>
+    <button class="btn btn--principal" type="button" data-abrir="pedido">{{pedido.barraBoton}}</button>
   </div>
 
   <!-- Aviso al agregar -->
@@ -199,7 +190,7 @@
   <!-- Ficha de producto -->
   <dialog class="hoja hoja--producto" data-dialogo="producto" aria-labelledby="ficha-nombre">
     <form method="dialog" class="hoja__cerrar-form">
-      <button class="icono-btn hoja__cerrar" aria-label="Cerrar">
+      <button class="icono-btn hoja__cerrar" aria-label="{{accesibilidad.cerrar}}">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
       </button>
     </form>
@@ -210,9 +201,9 @@
   <dialog class="hoja hoja--pedido" data-dialogo="pedido" aria-labelledby="pedido-titulo">
     <div class="pedido">
       <div class="pedido__cabeza">
-        <h2 id="pedido-titulo">Tu pedido</h2>
+        <h2 id="pedido-titulo">{{pedido.titulo}}</h2>
         <form method="dialog">
-          <button class="icono-btn" aria-label="Cerrar pedido">
+          <button class="icono-btn" aria-label="{{accesibilidad.cerrarPedido}}">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
           </button>
         </form>
@@ -220,9 +211,9 @@
 
       <div class="pedido__vacio" data-pedido-vacio>
         <div class="pedido__vacio-dibujo" data-dibujo-vacio aria-hidden="true"></div>
-        <p>Tu pedido está vacío.</p>
-        <p class="info__nota">Elegí una prenda del catálogo, sumala y la vas a ver acá.</p>
-        <button class="btn btn--principal" type="button" data-ir-catalogo>Ir al catálogo</button>
+        <p>{{pedido.vacio}}</p>
+        <p class="info__nota">{{pedido.vacioNota}}</p>
+        <button class="btn btn--principal" type="button" data-ir-catalogo>{{pedido.irCatalogo}}</button>
       </div>
 
       <div class="pedido__lleno" data-pedido-lleno hidden>
@@ -230,41 +221,41 @@
 
         <form class="pedido__form" data-form-pedido novalidate>
           <div class="campo">
-            <label for="p-nombre">Tu nombre</label>
-            <input id="p-nombre" name="nombre" type="text" autocomplete="given-name" placeholder="Ej: Sofía…" maxlength="60" spellcheck="false" required>
-            <p class="campo__error" id="p-nombre-error" hidden>Escribí tu nombre así sabemos quién hace el pedido.</p>
+            <label for="p-nombre">{{pedido.nombre}}</label>
+            <input id="p-nombre" name="nombre" type="text" autocomplete="given-name" placeholder="{{pedido.nombreEjemplo}}" maxlength="60" spellcheck="false" required>
+            <p class="campo__error" id="p-nombre-error" hidden>{{pedido.nombreError}}</p>
           </div>
 
           <fieldset class="campo">
-            <legend>Entrega</legend>
+            <legend>{{pedido.entrega}}</legend>
             <div class="opciones" data-opciones-entrega></div>
           </fieldset>
 
           <div class="campo" data-campo-direccion hidden>
-            <label for="p-zona">Localidad o barrio</label>
-            <input id="p-zona" name="zona" type="text" autocomplete="address-level2" placeholder="Ej: Villa Ballester…" maxlength="80">
+            <label for="p-zona">{{pedido.zona}}</label>
+            <input id="p-zona" name="zona" type="text" autocomplete="address-level2" placeholder="{{pedido.zonaEjemplo}}" maxlength="80">
           </div>
 
           <div class="campo">
-            <label for="p-pago">Cómo querés pagar</label>
+            <label for="p-pago">{{pedido.pago}}</label>
             <select id="p-pago" name="pago" data-select-pago></select>
           </div>
 
           <div class="pedido__total">
-            <span>Total</span>
+            <span>{{pedido.total}}</span>
             <strong data-total></strong>
           </div>
           <p class="info__nota" data-total-nota hidden></p>
 
           <button class="btn btn--principal btn--ancho btn--wa" type="submit">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.2-4A8 8 0 1 1 8.4 19L4 20Z"/><path d="M9 9.2c.2 2.3 2.4 4.6 4.8 4.8l1-1.1 1.7.8-.3 1.5c-3.7.5-7.9-3.5-7.4-7.4L10.3 7.5l.8 1.7-1 1"/></svg>
-            Enviar pedido por WhatsApp
+            {{pedido.enviar}}
           </button>
-          <p class="pedido__aclaracion">Se abre WhatsApp con el mensaje listo. Pagás recién cuando confirmamos stock y entrega.</p>
+          <p class="pedido__aclaracion">{{pedido.aclaracion}}</p>
 
           <div class="pedido__enviado" data-enviado role="status" hidden>
-            <p>Abrimos WhatsApp con tu pedido. Si ya lo mandaste, podés vaciar la lista; si no, sigue guardada acá.</p>
-            <button class="link-btn" type="button" data-vaciar>Vaciar pedido</button>
+            <p>{{pedido.enviado}}</p>
+            <button class="link-btn" type="button" data-vaciar>{{pedido.vaciar}}</button>
           </div>
         </form>
       </div>
@@ -272,26 +263,26 @@
   </dialog>
 
   <!-- Menú (celular) -->
-  <dialog class="hoja hoja--menu" data-dialogo="menu" aria-label="Menú">
+  <dialog class="hoja hoja--menu" data-dialogo="menu" aria-label="{{accesibilidad.menu}}">
     <div class="menu">
       <div class="pedido__cabeza">
-        <p class="logotipo" translate="no">bel.intimma</p>
+        <p class="logotipo" translate="no">{{encabezado.logo}}</p>
         <form method="dialog">
-          <button class="icono-btn" aria-label="Cerrar menú">
+          <button class="icono-btn" aria-label="{{accesibilidad.cerrarMenu}}">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
           </button>
         </form>
       </div>
-      <nav aria-label="Menú">
+      <nav aria-label="{{accesibilidad.menu}}">
         <ul class="menu__lista" data-menu-lista>
-          <li><a href="#catalogo">Catálogo</a></li>
-          <li><a href="#como-comprar">Cómo comprar</a></li>
-          <li><a href="#talles">Guía de talles</a></li>
-          <li><a href="#pagos">Pagos y entregas</a></li>
-          <li><a href="#preguntas">Preguntas frecuentes</a></li>
+          <li><a href="#catalogo">{{encabezado.menuCatalogo}}</a></li>
+          <li><a href="#como-comprar">{{encabezado.menuComoComprar}}</a></li>
+          <li><a href="#talles">{{encabezado.menuTalles}}</a></li>
+          <li><a href="#pagos">{{encabezado.menuPagos}}</a></li>
+          <li><a href="#preguntas">{{encabezado.menuPreguntas}}</a></li>
         </ul>
       </nav>
-      <a class="btn btn--contorno btn--ancho" data-link="whatsapp" href="#" target="_blank" rel="noopener noreferrer">Escribinos por WhatsApp</a>
+      <a class="btn btn--contorno btn--ancho" data-link="whatsapp" href="#" target="_blank" rel="noopener noreferrer">{{encabezado.menuWhatsapp}}</a>
     </div>
   </dialog>
 
