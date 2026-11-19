@@ -6,18 +6,10 @@
   "precioAntes": null,
   "fotos": [],
   "talles": [
-    {
-      "talle": "M",
-      "agotado": false
-    },
-    {
-      "talle": "L",
-      "agotado": false
-    },
-    {
-      "talle": "XL",
-      "agotado": false
-    }
+    "S",
+    "M",
+    "L",
+    "XL"
   ],
   "colores": [
     "Rosa",
