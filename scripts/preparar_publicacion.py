@@ -271,6 +271,7 @@ def armar_datos() -> str:
             "fotos": fotos,
             "descripcion": d.get("descripcion"),
             "etiqueta": d.get("etiqueta"),
+            "agotado": d.get("agotado") is True,
             "disponible": d.get("disponible", True) is not False,
         })
 

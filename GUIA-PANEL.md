@@ -64,8 +64,14 @@ stock, se saca solo del pedido.
 
 ## Sin stock de todo el producto
 
-Entrá al producto y desactivá **Mostrar en la página** → **Guardar**. El producto queda guardado
-con sus fotos; cuando vuelva a entrar, lo activás de nuevo.
+**Desde la lista, sin entrar a cada producto:** en **Productos** tocá **Editar** (arriba). La lista
+se convierte en una tabla con un interruptor **Sin stock** por producto (también precio, precio
+anterior, etiqueta y «Mostrar en la página»). Cambiá lo que quieras y tocá **Guardar** una sola vez.
+Con **Filtrar → Sin stock** ves solo los que están marcados.
+
+Un producto sin stock se sigue viendo en la página, con la etiqueta «Sin stock» y la foto más
+clara, pero no se puede pedir. Si preferís que directamente no se vea, desactivá
+**Mostrar en la página**: queda guardado con sus fotos para cuando vuelva.
 
 Para borrarlo del todo: entrá al producto → menú ⋮ de arriba → **Eliminar**.
 

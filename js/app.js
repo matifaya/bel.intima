@@ -123,7 +123,8 @@
         sinStockPorColor,
         fotos: fotos.slice(0, 8),
         descripcion: texto(p.descripcion, 400),
-        etiqueta: texto(p.etiqueta, 20)
+        etiqueta: texto(p.etiqueta, 20),
+        agotado: p.agotado === true // sin stock de todo el producto
       }];
     });
   }
@@ -145,6 +146,7 @@
   /* Stock: ¿hay esta combinación? Un talle o un color sin stock no se puede elegir, y
      cada color puede tener sus propios talles sin stock. */
   const hay = (p, talle, color) =>
+    !p.agotado &&
     !(talle && p.tallesAgotados.includes(talle)) &&
     !(color && p.coloresAgotados.includes(color)) &&
     !(talle && color && p.sinStockPorColor.get(color).includes(talle));
@@ -401,16 +403,19 @@
 
   function tarjeta(p, i) {
     const cat = categoria(p.categoria);
-    const etiqueta = p.etiqueta
-      ? `<span class="tarjeta__etiqueta${/oferta|sale|%/i.test(p.etiqueta) ? " tarjeta__etiqueta--oferta" : ""}">${escapar(p.etiqueta)}</span>`
-      : "";
+    const sinStock = productoSinStock(p);
+    const etiqueta = sinStock
+      ? `<span class="tarjeta__etiqueta tarjeta__etiqueta--sin-stock">${escapar(tx("catalogo.etiquetaSinStock"))}</span>`
+      : p.etiqueta
+        ? `<span class="tarjeta__etiqueta${/oferta|sale|%/i.test(p.etiqueta) ? " tarjeta__etiqueta--oferta" : ""}">${escapar(p.etiqueta)}</span>`
+        : "";
     const colores = (p.colores || []);
     const muestras = colores.length
       ? `<span class="muestras" aria-hidden="true">${colores.slice(0, 5).map((c) => `<span class="muestra${colorSinStock(p, c) ? " muestra--agotada" : ""}" data-color="${escapar(c)}"></span>`).join("")}</span>
          <span class="solo-lector">${escapar(tx("accesibilidad.colores", { colores: colores.join(", ") }))}</span>`
       : "<span></span>";
     const talles = (p.talles || []).length ? `<span class="tarjeta__talles">${escapar(tx("catalogo.rangoTalles", { desde: p.talles[0], hasta: p.talles[p.talles.length - 1] }))}</span>` : "";
-    return `<li class="tarjeta" data-cat="${escapar(p.categoria)}" data-i="${i}">
+    return `<li class="tarjeta${sinStock ? " tarjeta--sin-stock" : ""}" data-cat="${escapar(p.categoria)}" data-i="${i}">
       <div class="tarjeta__media">${etiqueta}${media(p, { conSegunda: true })}</div>
       <div class="tarjeta__info">
         <h3 class="tarjeta__nombre"><a class="tarjeta__abrir" href="#producto=${encodeURIComponent(p.id)}">${escapar(p.nombre)}</a></h3>

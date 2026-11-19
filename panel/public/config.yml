@@ -72,7 +72,13 @@ collections:
     slug: "{{nombre}}"
     summary: "{{nombre}}"
     sortable_fields: [nombre, precio, categoria]
+    # Botón «Editar» de la lista: tabla para cambiar estos datos en varios productos a la vez
+    bulk_edit:
+      fields: [agotado, disponible, precio, precioAntes, etiqueta]
     view_filters:
+      - label: Sin stock
+        field: agotado
+        pattern: true
       - label: Ocultos
         field: disponible
         pattern: false
@@ -175,11 +181,17 @@ collections:
         required: false
         maxlength: 20
         hint: "Opcional. Ej: Nuevo, Oferta, Últimos. Si dice «Oferta», se ve en fucsia."
+      - name: agotado
+        label: Sin stock (todo el producto)
+        widget: boolean
+        default: false
+        required: false
+        hint: "Se sigue viendo en la página, con la etiqueta «Sin stock», pero no se puede pedir. También se cambia desde la lista de productos con el botón «Editar»."
       - name: disponible
         label: Mostrar en la página
         widget: boolean
         default: true
-        hint: "Desactivalo si no hay stock: el producto queda guardado pero no se ve."
+        hint: "Desactivalo para que no se vea en la página: el producto queda guardado."
 
   # ------------------------------------------------------------------------
   - name: categorias
@@ -476,6 +488,11 @@ collections:
             label: "Título"
             widget: string
             maxlength: 160
+          - name: etiquetaSinStock
+            label: "Etiqueta de producto sin stock"
+            widget: string
+            maxlength: 160
+            hint: "Se ve sobre la foto de los productos marcados «Sin stock (todo el producto)»."
           - name: filtroTodo
             label: "Filtro para ver todo"
             widget: string

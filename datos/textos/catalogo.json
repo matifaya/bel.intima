@@ -3,6 +3,7 @@
   "circuloPagos": "Pagos",
   "circuloPreguntas": "Preguntas",
   "titulo": "Catálogo",
+  "etiquetaSinStock": "Sin stock",
   "filtroTodo": "Todo",
   "cantidadUno": "{n} producto",
   "cantidadVarios": "{n} productos",

@@ -557,6 +557,8 @@ svg[viewBox="0 0 24 24"] {
   font-weight: 500;
 }
 .tarjeta__etiqueta--oferta { background: var(--fucsia); color: var(--blanco); }
+.tarjeta__etiqueta--sin-stock { background: var(--malva); color: var(--blanco); }
+.tarjeta--sin-stock .tarjeta__media > :not(.tarjeta__etiqueta) { opacity: 0.55; }
 
 .tarjeta__nombre {
   font-family: var(--f-texto);
