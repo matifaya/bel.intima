@@ -5,10 +5,22 @@
   "precioAntes": 28500,
   "fotos": [],
   "talles": [
-    "M",
-    "L",
-    "XL",
-    "XXL"
+    {
+      "talle": "M",
+      "agotado": false
+    },
+    {
+      "talle": "L",
+      "agotado": false
+    },
+    {
+      "talle": "XL",
+      "agotado": false
+    },
+    {
+      "talle": "XXL",
+      "agotado": false
+    }
   ],
   "colores": [
     "Blanco y rosa",

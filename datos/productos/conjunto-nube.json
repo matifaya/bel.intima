@@ -5,9 +5,18 @@
   "precioAntes": 19900,
   "fotos": [],
   "talles": [
-    "M",
-    "L",
-    "XL"
+    {
+      "talle": "M",
+      "agotado": false
+    },
+    {
+      "talle": "L",
+      "agotado": false
+    },
+    {
+      "talle": "XL",
+      "agotado": false
+    }
   ],
   "colores": [
     "Rosa bebé"

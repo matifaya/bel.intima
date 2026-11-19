@@ -4,9 +4,18 @@
   "precio": 24500,
   "fotos": [],
   "talles": [
-    "85",
-    "90",
-    "95"
+    {
+      "talle": "85",
+      "agotado": false
+    },
+    {
+      "talle": "90",
+      "agotado": false
+    },
+    {
+      "talle": "95",
+      "agotado": false
+    }
   ],
   "colores": [
     "Rosa viejo",

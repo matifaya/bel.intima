@@ -114,9 +114,22 @@ collections:
         hint: "La primera es la que se ve en el catálogo. Si no subís ninguna, se muestra un dibujo. Se achican solas y se les borra la ubicación."
       - name: talles
         label: Talles
+        label_singular: Talle
         widget: list
         required: false
-        hint: "Uno por renglón (Enter agrega otro). Ej: S, M, L o 85, 90, 95"
+        collapsed: false
+        summary: "{{fields.talle}}{{fields.agotado | ternary(' — sin stock', '')}}"
+        hint: "Uno por talle, en orden (Ej: S, M, L o 85, 90, 95). Si se termina uno, activá «Sin stock»: en la página se ve tachado y no se puede elegir."
+        fields:
+          - name: talle
+            label: Talle
+            widget: string
+            maxlength: 12
+          - name: agotado
+            label: Sin stock
+            widget: boolean
+            default: false
+            required: false
       - name: colores
         label: Colores
         widget: list
@@ -237,7 +250,7 @@ collections:
             widget: list
             min: 1
             max: 5
-            summary: "{{nombre}}"
+            summary: "{{fields.nombre}}"
             fields:
               - name: nombre
                 label: Nombre
@@ -270,7 +283,7 @@ collections:
             label_singular: Tabla
             widget: list
             max: 6
-            summary: "{{titulo}}"
+            summary: "{{fields.titulo}}"
             fields:
               - name: titulo
                 label: Título de la tabla
@@ -287,7 +300,7 @@ collections:
                 label_singular: Talle
                 widget: list
                 max: 20
-                summary: "{{talle}}"
+                summary: "{{fields.talle}}"
                 fields:
                   - name: talle
                     label: Talle
@@ -309,7 +322,7 @@ collections:
             label_singular: Pregunta
             widget: list
             max: 20
-            summary: "{{pregunta}}"
+            summary: "{{fields.pregunta}}"
             fields:
               - name: pregunta
                 label: Pregunta
@@ -490,6 +503,16 @@ collections:
             label: "Aviso si no eligió talle"
             widget: string
             maxlength: 160
+          - name: talleSinStock
+            label: "Talle sin stock (lectores de pantalla)"
+            widget: string
+            maxlength: 160
+            hint: "No se ve: los lectores de pantalla lo leen después del talle tachado (ej: «M, sin stock»)."
+          - name: sinStock
+            label: "Aviso si no queda ningún talle"
+            widget: string
+            maxlength: 160
+            hint: "Reemplaza al botón «Agregar al pedido» cuando todos los talles están sin stock."
           - name: errorColor
             label: "Aviso si no eligió color"
             widget: string
@@ -540,7 +563,7 @@ collections:
             widget: list
             min: 1
             max: 8
-            summary: "{{titulo}}"
+            summary: "{{fields.titulo}}"
             fields:
               - { name: titulo, label: Título, widget: string, maxlength: 60 }
               - { name: texto, label: Texto, widget: text, maxlength: 300 }

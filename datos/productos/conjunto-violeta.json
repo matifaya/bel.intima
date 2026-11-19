@@ -4,10 +4,22 @@
   "precio": 22900,
   "fotos": [],
   "talles": [
-    "85",
-    "90",
-    "95",
-    "100"
+    {
+      "talle": "85",
+      "agotado": false
+    },
+    {
+      "talle": "90",
+      "agotado": false
+    },
+    {
+      "talle": "95",
+      "agotado": false
+    },
+    {
+      "talle": "100",
+      "agotado": false
+    }
   ],
   "colores": [
     "Rosa",

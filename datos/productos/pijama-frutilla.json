@@ -9,10 +9,22 @@
     "/img/productos/1000965633.webp"
   ],
   "talles": [
-    "S",
-    "M",
-    "L",
-    "XL"
+    {
+      "talle": "S",
+      "agotado": false
+    },
+    {
+      "talle": "M",
+      "agotado": false
+    },
+    {
+      "talle": "L",
+      "agotado": false
+    },
+    {
+      "talle": "XL",
+      "agotado": false
+    }
   ],
   "colores": [
     "Negro con lunares blancos"

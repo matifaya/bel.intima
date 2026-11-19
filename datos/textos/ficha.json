@@ -3,6 +3,8 @@
   "linkGuia": "Guía de talles",
   "color": "Color",
   "errorTalle": "Elegí un talle para sumarlo.",
+  "talleSinStock": "sin stock",
+  "sinStock": "Sin stock por ahora. Escribinos y te avisamos cuando vuelva.",
   "errorColor": "Elegí un color para sumarlo.",
   "agregar": "Agregar al pedido",
   "agregado": "Agregado al pedido: {producto}",

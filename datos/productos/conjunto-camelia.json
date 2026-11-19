@@ -4,10 +4,22 @@
   "precio": 23800,
   "fotos": [],
   "talles": [
-    "90",
-    "95",
-    "100",
-    "105"
+    {
+      "talle": "90",
+      "agotado": false
+    },
+    {
+      "talle": "95",
+      "agotado": false
+    },
+    {
+      "talle": "100",
+      "agotado": false
+    },
+    {
+      "talle": "105",
+      "agotado": false
+    }
   ],
   "colores": [
     "Blanco",

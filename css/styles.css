@@ -958,6 +958,19 @@ svg[viewBox="0 0 24 24"] {
 .opcion input:focus-visible + span { outline: 2px solid var(--fucsia); outline-offset: 2px; }
 .opcion .muestra { width: 16px; height: 16px; }
 .selector.con-error .opcion span { border-color: var(--error); }
+
+/* Talle sin stock: más claro y tachado en diagonal, como en las tiendas de ropa */
+.opcion--agotada input { cursor: not-allowed; }
+.opcion--agotada span,
+.opcion--agotada input:hover + span,
+.selector.con-error .opcion--agotada span {
+  color: var(--encaje);
+  border-color: rgb(201 154 176 / 0.45);
+  background: rgb(255 255 255 / 0.55) linear-gradient(to top right,
+    transparent calc(50% - 0.75px), rgb(201 154 176 / 0.8) calc(50% - 0.75px),
+    rgb(201 154 176 / 0.8) calc(50% + 0.75px), transparent calc(50% + 0.75px));
+}
+.ficha__sin-stock { flex: 1; color: var(--malva); font-size: var(--t-s); line-height: 1.4; }
 .selector__error { margin-top: var(--e-2); color: var(--error); font-size: var(--t-s); }
 
 .ficha__comprar {

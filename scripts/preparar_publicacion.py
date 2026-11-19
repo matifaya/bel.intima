@@ -247,7 +247,12 @@ def armar_datos() -> str:
             "categoria": a_id(d.get("categoria")),
             "precio": d.get("precio"),
             "precioAntes": d.get("precioAntes"),
-            "talles": d.get("talles"),
+            # El panel guarda [{"talle": "M", "agotado": false}, ...]; también acepta ["M", ...]
+            "talles": [t.get("talle") if isinstance(t, dict) else t for t in d.get("talles") or []]
+                       if isinstance(d.get("talles"), list) else [],
+            "tallesAgotados": [t.get("talle") for t in d.get("talles") or []
+                               if isinstance(t, dict) and t.get("agotado") is True]
+                              if isinstance(d.get("talles"), list) else [],
             "colores": d.get("colores"),
             "fotos": fotos,
             "descripcion": d.get("descripcion"),

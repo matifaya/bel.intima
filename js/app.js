@@ -103,13 +103,16 @@
       if (!precio) { avisar(`${p.id}: el precio tiene que ser un número sin puntos ni $.`); return []; }
       const fotos = Array.isArray(p.fotos) ? p.fotos.filter((f) => fotoValida(f) || (avisar(`${p.id}: se ignoró la foto "${texto(f, 80)}" (tiene que estar en img/ y ser jpg, png, webp o avif).`), false)) : [];
       vistos.add(p.id);
+      const talles = listaDeTextos(p.talles, 12, 15);
       return [{
         id: p.id,
         nombre: texto(p.nombre, 80) || p.id,
         categoria: p.categoria,
         precio,
         precioAntes: numeroPositivo(p.precioAntes) > precio ? numeroPositivo(p.precioAntes) : null,
-        talles: listaDeTextos(p.talles, 12, 15),
+        talles,
+        // Talles sin stock: se muestran tachados y no se pueden elegir
+        tallesAgotados: listaDeTextos(p.tallesAgotados, 12, 15).filter((t) => talles.includes(t)),
         colores: listaDeTextos(p.colores, 30, 12),
         fotos: fotos.slice(0, 8),
         descripcion: texto(p.descripcion, 400),
@@ -232,7 +235,7 @@
       if (!i || typeof i !== "object") continue;
       const p = PRODUCTOS.find((x) => x.id === i.id);
       if (!p) continue;
-      const talle = p.talles.length ? p.talles.find((t) => t === i.talle) : "";
+      const talle = p.talles.length ? p.talles.find((t) => t === i.talle && !p.tallesAgotados.includes(t)) : "";
       const color = p.colores.length ? p.colores.find((c) => c === i.color) : "";
       if (talle === undefined || color === undefined) continue;
       const cantidad = Number.isInteger(i.cantidad) && i.cantidad >= 1 ? Math.min(20, i.cantidad) : 0;
@@ -471,18 +474,24 @@
       .join("");
     const puntos = fotos.length > 1 ? `<div class="ficha__puntos" aria-hidden="true">${fotos.map((_, i) => `<span class="${i ? "" : "activo"}"></span>`).join("")}</div>` : "";
 
-    const grupo = (nombre, titulo, opciones, extra = "", conMuestra = false) => {
+    const grupo = (nombre, titulo, opciones, extra = "", conMuestra = false, agotados = []) => {
       if (!opciones || !opciones.length) return "";
-      const unica = opciones.length === 1;
+      const unica = opciones.filter((o) => !agotados.includes(o)).length === 1 && opciones.length === 1;
       return `<fieldset class="selector" data-selector="${nombre}">
         <legend><span>${escapar(titulo)}</span>${extra}</legend>
         <div class="selector__opciones">
-          ${opciones.map((o) => `<label class="opcion"><input type="radio" name="${nombre}" value="${escapar(o)}" ${unica ? "checked" : ""}>
-            <span>${conMuestra ? `<i class="muestra" data-color="${escapar(o)}" aria-hidden="true"></i>` : ""}${escapar(o)}</span></label>`).join("")}
+          ${opciones.map((o) => {
+            const agotado = agotados.includes(o);
+            return `<label class="opcion${agotado ? " opcion--agotada" : ""}"><input type="radio" name="${nombre}" value="${escapar(o)}" ${unica && !agotado ? "checked" : ""} ${agotado ? "disabled" : ""}>
+            <span>${conMuestra ? `<i class="muestra" data-color="${escapar(o)}" aria-hidden="true"></i>` : ""}${escapar(o)}${agotado ? `<em class="solo-lector">, ${escapar(tx("ficha.talleSinStock"))}</em>` : ""}</span></label>`;
+          }).join("")}
         </div>
         <p class="selector__error" id="error-${nombre}" hidden>${escapar(nombre === "talle" ? tx("ficha.errorTalle") : tx("ficha.errorColor"))}</p>
       </fieldset>`;
     };
+
+    // Si no queda ningún talle, no se puede agregar
+    const sinStock = p.talles.length > 0 && p.talles.every((t) => p.tallesAgotados.includes(t));
 
     $("[data-ficha]").innerHTML = `
       <div class="ficha__media">
@@ -497,16 +506,17 @@
           </div>
           ${bloquePrecio(p)}
           ${p.descripcion ? `<p class="ficha__desc">${escapar(p.descripcion)}</p>` : ""}
-          ${grupo("talle", tx("ficha.talle"), p.talles, `<a href="#talles" data-salir>${escapar(tx("ficha.linkGuia"))}</a>`)}
+          ${grupo("talle", tx("ficha.talle"), p.talles, `<a href="#talles" data-salir>${escapar(tx("ficha.linkGuia"))}</a>`, false, p.tallesAgotados)}
           ${grupo("color", tx("ficha.color"), p.colores, "", true)}
         </div>
         <div class="ficha__comprar">
+          ${sinStock ? `<p class="ficha__sin-stock">${escapar(tx("ficha.sinStock"))}</p>` : `
           <div class="cantidad" role="group" aria-label="${escapar(tx("accesibilidad.cantidad"))}">
             <button type="button" data-cant="-1" aria-label="${escapar(tx("accesibilidad.restar"))}" disabled>${ICONO_MENOS}</button>
             <output data-cant-valor aria-live="polite">1</output>
             <button type="button" data-cant="1" aria-label="${escapar(tx("accesibilidad.sumar"))}">${ICONO_MAS}</button>
           </div>
-          <button class="btn btn--principal" type="button" data-agregar>${escapar(tx("ficha.agregar"))}</button>
+          <button class="btn btn--principal" type="button" data-agregar>${escapar(tx("ficha.agregar"))}</button>`}
         </div>
         <div class="ficha__extra">
           <button class="link-btn" type="button" data-compartir>
@@ -536,7 +546,7 @@
       $(".selector__error", sel).hidden = true;
     }));
 
-    $("[data-agregar]", ficha).addEventListener("click", () => {
+    $("[data-agregar]", ficha)?.addEventListener("click", () => {
       const elegido = (nombre) => {
         const sel = $(`[data-selector="${nombre}"]`, ficha);
         if (!sel) return "";

@@ -31,7 +31,8 @@ Si usás una compu que no es tuya, al terminar tocá tu foto (arriba a la derech
    - **Fotos:** tocá **Explorar** y elegí una o varias de la galería. **La primera es la que se ve
      en el catálogo.** Se achican solas y se les borra la ubicación: no tenés que hacer nada.
      Si no subís fotos, se muestra un dibujito de la categoría.
-   - **Talles** y **Colores:** uno por renglón. Con **Añadir** sumás otro.
+   - **Talles:** uno por recuadro, en orden. Con **Añadir Talle** sumás otro.
+   - **Colores:** uno por renglón. Con **Añadir** sumás otro.
    - **Descripción:** tela, detalles, cómo calza.
    - **Etiqueta** (opcional): *Nuevo*, *Oferta*, *Últimos*… Si dice *Oferta*, se ve en fucsia.
 3. Tocá **Guardar**.
@@ -41,7 +42,14 @@ Si usás una compu que no es tuya, al terminar tocá tu foto (arriba a la derech
 
 **Productos** → tocá el producto → cambiá lo que quieras → **Guardar**.
 
-## Sin stock
+## Se terminó un talle
+
+Entrá al producto → en **Talles**, activá **Sin stock** en el talle que se terminó → **Guardar**.
+En la página ese talle se ve más claro y tachado, y no se puede elegir. Cuando vuelva a entrar,
+lo desactivás. Si todos los talles están sin stock, en lugar del botón «Agregar al pedido» aparece
+un aviso (el texto se cambia en *Textos de la página → Ficha de producto*).
+
+## Sin stock de todo el producto
 
 Entrá al producto y desactivá **Mostrar en la página** → **Guardar**. El producto queda guardado
 con sus fotos; cuando vuelva a entrar, lo activás de nuevo.

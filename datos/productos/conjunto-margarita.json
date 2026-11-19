@@ -4,9 +4,18 @@
   "precio": 15500,
   "fotos": [],
   "talles": [
-    "S",
-    "M",
-    "L"
+    {
+      "talle": "S",
+      "agotado": false
+    },
+    {
+      "talle": "M",
+      "agotado": false
+    },
+    {
+      "talle": "L",
+      "agotado": false
+    }
   ],
   "colores": [
     "Lila",
