@@ -1,39 +1,37 @@
 {
-  "nombre": "Pijama Algodón Corazones",
+  "orden": 10,
+  "nombre": "Camisero Winnie Pooh",
   "categoria": "pijamas",
-  "precio": 25900,
-  "precioAntes": 28500,
-  "fotos": [],
+  "precio": 25000,
+  "precioAntes": null,
+  "fotos": [
+    "/img/productos/1000973990.webp",
+    "/img/productos/1000973991.webp",
+    "/img/productos/1000973992.webp",
+    "/img/productos/1000973993.webp",
+    "/img/productos/1000965633.webp"
+  ],
   "talles": [
     {
-      "talle": "M",
+      "talle": "S",
       "agotado": false
+    },
+    {
+      "talle": "M",
+      "agotado": true
     },
     {
       "talle": "L",
-      "agotado": false
+      "agotado": true
     },
     {
       "talle": "XL",
-      "agotado": false
-    },
-    {
-      "talle": "XXL",
-      "agotado": false
+      "agotado": true
     }
   ],
-  "colores": [
-    {
-      "color": "Blanco y rosa",
-      "agotado": false
-    },
-    {
-      "color": "Gris y rosa",
-      "agotado": false
-    }
-  ],
+  "colores": [],
   "descripcion": "Remera y short de algodón peinado con estampa de corazones. El de todos los días.",
-  "etiqueta": "Oferta",
-  "disponible": true,
-  "orden": 10
+  "etiqueta": "",
+  "agotado": false,
+  "disponible": true
 }
