@@ -1,16 +1,18 @@
 {
+  "orden": 7,
   "nombre": "Conjunto Camelia",
   "categoria": "con-aro",
   "precio": 23800,
+  "precioAntes": null,
   "fotos": [],
   "talles": [
     {
       "talle": "90",
-      "agotado": false
+      "agotado": true
     },
     {
       "talle": "95",
-      "agotado": false
+      "agotado": true
     },
     {
       "talle": "100",
@@ -24,19 +26,22 @@
   "colores": [
     {
       "color": "Blanco",
-      "agotado": false
+      "agotado": false,
+      "tallesAgotados": []
     },
     {
       "color": "Negro",
-      "agotado": false
+      "agotado": false,
+      "tallesAgotados": []
     },
     {
       "color": "Rojo",
-      "agotado": false
+      "agotado": false,
+      "tallesAgotados": []
     }
   ],
   "descripcion": "Corpiño con aro de taza entera, buena contención para talles grandes. Bombacha culotte de encaje.",
   "etiqueta": "",
-  "disponible": true,
-  "orden": 7
+  "agotado": false,
+  "disponible": true
 }
