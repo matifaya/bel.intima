@@ -12,7 +12,7 @@
   "talles": [
     {
       "talle": "S",
-      "agotado": false
+      "agotado": true
     },
     {
       "talle": "M",
@@ -20,20 +20,22 @@
     },
     {
       "talle": "L",
-      "agotado": false
+      "agotado": true
     },
     {
       "talle": "XL",
-      "agotado": false
+      "agotado": true
     }
   ],
   "colores": [
     {
       "color": "Blanco con lunares negros",
-      "agotado": false
+      "agotado": false,
+      "tallesAgotados": []
     }
   ],
   "descripcion": "Camisero manga corta y short de tela Bruselas. Liviano, fresco y perfecto para el verano.",
   "etiqueta": "Nuevo",
+  "agotado": false,
   "disponible": true
 }
