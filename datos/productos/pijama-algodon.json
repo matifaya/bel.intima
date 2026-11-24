@@ -29,9 +29,15 @@
       "agotado": true
     }
   ],
-  "colores": [],
-  "descripcion": "Remera y short de algodón peinado con estampa de corazones. El de todos los días.",
-  "etiqueta": "",
+  "colores": [
+    {
+      "color": "Blanco",
+      "agotado": false,
+      "tallesAgotados": []
+    }
+  ],
+  "descripcion": "Camisero manga corta y short de modal soft premium. Liviano, fresco y perfecto para el verano.",
+  "etiqueta": "Nuevo",
   "agotado": false,
   "disponible": true
 }
