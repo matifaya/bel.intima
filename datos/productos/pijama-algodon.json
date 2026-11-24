@@ -33,7 +33,11 @@
     {
       "color": "Blanco",
       "agotado": false,
-      "tallesAgotados": []
+      "tallesAgotados": [
+        "M",
+        "L",
+        "XL"
+      ]
     }
   ],
   "descripcion": "Camisero manga corta y short de modal soft premium. Liviano, fresco y perfecto para el verano.",
