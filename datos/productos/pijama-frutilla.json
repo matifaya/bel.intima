@@ -1,6 +1,6 @@
 {
   "orden": 8,
-  "nombre": "Camisero Bruselas Lunares Negros",
+  "nombre": "( BRUSELAS - CORTO ) CAMISERO LUNARES NEGROS",
   "categoria": "pijamas",
   "precio": 25000,
   "precioAntes": null,
@@ -30,10 +30,7 @@
     {
       "color": "Negro con lunares blancos",
       "agotado": false,
-      "tallesAgotados": [
-        "M",
-        "S"
-      ]
+      "tallesAgotados": []
     }
   ],
   "descripcion": "Camisero manga corta y short de tela Bruselas. Liviano, fresco y perfecto para el verano.",
